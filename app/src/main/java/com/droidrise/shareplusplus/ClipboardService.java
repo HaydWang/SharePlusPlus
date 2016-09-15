@@ -4,11 +4,9 @@ import android.app.Service;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
 
 /**
  * Created by a22460 on 16/9/14.
@@ -64,7 +62,8 @@ public class ClipboardService extends Service {
                             ClipData.Item item = data.getItemAt(0);
                             String text = item.getText().toString();
 
-                            Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+                            TextDrawer.showContent(this, text);
+                            //Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
