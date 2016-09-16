@@ -55,16 +55,18 @@ public class ClipboardService extends Service {
             if (data != null) {
                 ClipDescription description = data.getDescription();
                 if (description != null) {
-                    String type = description.getMimeType(0);
-                    if (type != null) {
-                        if (type.equalsIgnoreCase(ClipDescription.MIMETYPE_TEXT_PLAIN)
-                                || type.equalsIgnoreCase(ClipDescription.MIMETYPE_TEXT_HTML)) {
-                            ClipData.Item item = data.getItemAt(0);
-                            String text = item.getText().toString();
-
-                            TextDrawer.showContent(this, text);
-                            //Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
-                        }
+                    if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                        ClipData.Item item = data.getItemAt(0);
+                        String text = item.getText().toString();
+                        TextDrawer.showContent(this, text);
+                    } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_HTML)) {
+                        ClipData.Item item = data.getItemAt(0);
+                        String text = item.coerceToText(this).toString();
+                        TextDrawer.showContent(this, text);
+                    } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_INTENT)) {
+                        // TODO: handle intent
+                    } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_URILIST)) {
+                        // TODO: handle uri
                     }
                 }
             }
