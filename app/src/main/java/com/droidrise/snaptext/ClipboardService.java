@@ -1,4 +1,4 @@
-package com.droidrise.shareplusplus;
+package com.droidrise.snaptext;
 
 import android.app.ActivityManager;
 import android.app.Service;
@@ -27,6 +27,8 @@ import java.util.TreeMap;
 
 public class ClipboardService extends Service {
     private ClipboardManager mClipboardManager;
+    private TextSnaper mTextSnaper;
+
     private ClipboardManager.OnPrimaryClipChangedListener mClipChangedListener
             = new ClipboardManager.OnPrimaryClipChangedListener() {
         public void onPrimaryClipChanged() {
@@ -36,6 +38,7 @@ public class ClipboardService extends Service {
 
     @Override
     public void onCreate() {
+        mTextSnaper = new TextSnaper(this);
         mClipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
         mClipboardManager.addPrimaryClipChangedListener(mClipChangedListener);
     }
@@ -71,12 +74,12 @@ public class ClipboardService extends Service {
                         String source = getForgroundActivity();
                         ClipData.Item item = data.getItemAt(0);
                         String text = item.getText().toString();
-                        TextSnaper.showContent(this, text, source);
+                        mTextSnaper.showContent(text, source);
                     } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_HTML)) {
                         String source = getForgroundActivity();
                         ClipData.Item item = data.getItemAt(0);
                         String text = item.coerceToText(this).toString();
-                        TextSnaper.showContent(this, text, source);
+                        mTextSnaper.showContent(text, source);
                     } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_INTENT)) {
                         // TODO: handle intent
                     } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_URILIST)) {

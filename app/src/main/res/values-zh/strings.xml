@@ -4,10 +4,14 @@
     <string name="sent_via_sanptext">发送自 字画</string>
     <string name="action_settings">设置</string>
 
-    <string name="friends_cycle">朋友圈</string>
+    <string name="wechat_friend">微信</string>
+    <string name="wechat_moment">朋友圈</string>
+    <string name="share">分享...</string>
     <string name="save">保存</string>
+    <string name="saved">摘录已保存至照片库中。</string>
     <string name="cancel">取消</string>
 
-    <string name="date_format">yyyy年M月d日 aK:m</string>
+    <string name="date_format">yyyy年M月d日 aK:mm</string>
     <string name="snap_from">摘录自</string>
+    <string name="failed_share_snap">分享出错了。</string>
 </resources>

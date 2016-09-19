@@ -1,4 +1,4 @@
-package com.droidrise.shareplusplus;
+package com.droidrise.snaptext;
 
 /**
  * Created by a22460 on 16/9/17.

@@ -1,4 +1,4 @@
-package com.droidrise.shareplusplus;
+package com.droidrise.snaptext;
 
 import android.app.Activity;
 import android.content.Context;

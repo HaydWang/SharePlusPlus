@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.droidrise.shareplusplus.ShadowLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.droidrise.snaptext.ShadowLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/shadow_layout"
     android:layout_width="wrap_content"
@@ -56,4 +56,4 @@
 
     </FrameLayout>
 
-</com.droidrise.shareplusplus.ShadowLayout>
+</com.droidrise.snaptext.ShadowLayout>
