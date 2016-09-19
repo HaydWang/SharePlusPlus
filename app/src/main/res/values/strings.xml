@@ -1,8 +1,12 @@
 <resources>
-    <string name="app_name">TextSnap</string>
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
+    <string name="app_name">SnapText</string>
+    <string name="sent_via_sanptext">Sent via SnapText</string>
     <string name="action_settings">Settings</string>
+
+    <string name="friends_cycle">Moments</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="date_format">MMM.d yyyy K:m a</string>
+    <string name="snap_from">From</string>
 </resources>

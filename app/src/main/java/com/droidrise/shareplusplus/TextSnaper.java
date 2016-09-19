@@ -10,12 +10,14 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,12 +30,30 @@ import java.util.ArrayList;
  */
 
 public class TextSnaper {
-    protected final static String DEFAULT_TITLE = "From Share++";
-    protected final static String IMAGE_FOLDER = "TextSnapImage";
+    protected final static String IMAGE_FOLDER = "SnapTextImage";
 
     protected static Context mContext;
     protected static WindowManager.LayoutParams mLayoutParams;
     protected static View topView;
+
+    protected static CircleButton.OnCircleButtonClickListener circleButtonClickListener =
+            new CircleButton.OnCircleButtonClickListener() {
+                @Override
+                public void onClick(int index) {
+                    switch (index) {
+                        case R.id.button_exit:
+                            dismissTopView();
+                            break;
+                        case R.id.button_moments:
+                            shareSnap();
+                            dismissTopView();
+                            break;
+                        default:
+                            Toast.makeText(mContext, "Un-handle button", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                }
+            };
 
     public static void showContent(Context context, String content, String source) {
         mContext = context;
@@ -44,38 +64,50 @@ public class TextSnaper {
         tx.setText(content);
 
         TextView tvTime = (TextView) topView.findViewById(R.id.text_timestamp);
-        tvTime.setText(new SimpleDateFormat("yyyy-MM-dd hh:mm").format(new java.util.Date()));
+        tvTime.setText(new SimpleDateFormat(context.getString(R.string.date_format)).format(new java.util.Date()));
 
         TextView tvSign = (TextView) topView.findViewById(R.id.text_signature);
-        tvSign.setText("Sent via TextSnap");
+        tvSign.setText(context.getString(R.string.sent_via_sanptext));
 
         TextView tvDataSource = (TextView) topView.findViewById(R.id.text_data_source);
         if (source != null) {
-            tvDataSource.setText("From " + source);
+            tvDataSource.setText(context.getString(R.string.snap_from) + " " + source);
             tvDataSource.setVisibility(View.VISIBLE);
         } else {
             tvDataSource.setVisibility(View.GONE);
         }
 
-        FloatingActionButton button = (FloatingActionButton) topView.findViewById(R.id.button_exit);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismissTopView();
-            }
-        });
+        CircleButton circleButton = (CircleButton) topView.findViewById(R.id.button_wechat);
+        circleButton.setOnCircleButtonClickListener(circleButtonClickListener, R.id.button_wechat);
+        circleButton.setDrawable(context.getDrawable(R.drawable.sample_flat_136));
+        circleButton.setText("微信");
 
-        button = (FloatingActionButton) topView.findViewById(R.id.button_wechat);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shareSnap();
-                dismissTopView();
-            }
-        });
+        circleButton = (CircleButton) topView.findViewById(R.id.button_moments);
+        circleButton.setOnCircleButtonClickListener(circleButtonClickListener, R.id.button_moments);
+        circleButton.setDrawable(context.getDrawable(R.drawable.sample_flat_137));
+        circleButton.setText("朋友圈");
 
-        int w = WindowManager.LayoutParams.MATCH_PARENT;
+        circleButton = (CircleButton) topView.findViewById(R.id.button_save);
+        circleButton.setOnCircleButtonClickListener(circleButtonClickListener, R.id.button_save);
+        circleButton.setDrawable(context.getDrawable(R.drawable.ic_save));
+        int dimensionInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                24, context.getResources().getDisplayMetrics());
+        circleButton.getImageView().getLayoutParams().height = dimensionInDp;
+        circleButton.getImageView().getLayoutParams().width = dimensionInDp;
+        circleButton.getImageView().requestLayout();
+        circleButton.setText("保存");
+
+        circleButton = (CircleButton) topView.findViewById(R.id.button_exit);
+        circleButton.setOnCircleButtonClickListener(circleButtonClickListener, R.id.button_exit);
+        circleButton.setDrawable(context.getDrawable(R.drawable.ic_clear));
+        circleButton.getImageView().getLayoutParams().height = dimensionInDp;
+        circleButton.getImageView().getLayoutParams().width = dimensionInDp;
+        circleButton.getImageView().requestLayout();
+        circleButton.setText("取消");
+
+        int w = WindowManager.LayoutParams.WRAP_CONTENT;
         int h = WindowManager.LayoutParams.WRAP_CONTENT;
+
         int flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
         int type = WindowManager.LayoutParams.TYPE_TOAST;
 
@@ -84,12 +116,26 @@ public class TextSnaper {
         mLayoutParams.gravity = Gravity.TOP;
         wm.addView(topView, mLayoutParams);
 
-//        topView.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                saveFrameLayout(topView);
-//            }
-//        });
+        topView.post(new Runnable() {
+            @Override
+            public void run() {
+                updateFrameLayout(topView);
+            }
+        });
+    }
+
+    protected static void updateFrameLayout(View view) {
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        mLayoutParams.width = view.getWidth();
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(metrics);
+        int target = (int) (metrics.heightPixels * 0.8);
+        if (view.getHeight() > target) {
+            mLayoutParams.height = target;
+        }
+
+        wm.updateViewLayout(view, mLayoutParams);
     }
 
     protected static void dismissTopView() {
@@ -129,12 +175,12 @@ public class TextSnaper {
             if (!folder.exists()) {
                 folder.mkdirs();
             }
-            String date = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new java.util.Date());
-            File file = new File(folder.getAbsolutePath() + folder.separator + date + ".jpg");
+            //String date = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new java.util.Date());
+            File file = new File(folder.getAbsolutePath() + folder.separator + "cache.jpg");
 
             try {
                 FileOutputStream ostream = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 85, ostream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
                 ostream.close();
             } catch (IOException e) {
                 e.printStackTrace();

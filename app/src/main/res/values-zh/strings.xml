@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">字画</string>
+    <string name="sent_via_sanptext">发送自 字画</string>
+    <string name="action_settings">设置</string>
+
+    <string name="friends_cycle">朋友圈</string>
+    <string name="save">保存</string>
+    <string name="cancel">取消</string>
+
+    <string name="date_format">yyyy年M月d日 aK:m</string>
+    <string name="snap_from">摘录自</string>
+</resources>

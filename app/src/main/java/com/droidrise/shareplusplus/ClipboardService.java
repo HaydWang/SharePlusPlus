@@ -87,6 +87,7 @@ public class ClipboardService extends Service {
         }
     }
 
+    // TODO need test API20. and fix the issue when no activity switched
     protected String getForgroundActivity() {
         if (Build.VERSION.SDK_INT < 21)
             return getAppLable(getPreLollipop());

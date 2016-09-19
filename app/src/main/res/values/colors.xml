@@ -2,10 +2,15 @@
 <resources>
     <color name="colorPrimary">#4CAF50</color>
     <color name="colorPrimaryDark">#2E7D32</color>
-    <color name="colorAccent">#4CAF50</color>
+    <color name="colorAccent">#FFECB3</color>
 
     <color name="colorSnapBackground">#FEFEFE</color>
     <color name="colorSnapText">#3E3E3E</color>
     <color name="colorSnapTime">#886E3D</color>
-    <color name="colorSignature">#D3C7B1</color>
+    <color name="colorSignature">#886E3D</color>
+    <!--<color name="colorSignature">#D3C7B1</color>-->
+
+    <color name="default_button_background">#DDFFECB3</color>
+    <color name="default_shadow_color">#88757575</color>
+    <color name="shadow">#AA000000</color>
 </resources>
