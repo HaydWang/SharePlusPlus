@@ -67,7 +67,7 @@ class TextSnaper {
                             break;
                         case R.id.button_share:
                             Uri uri = snapToCache((ScrollView) topView.findViewById(R.id.layout_snap));
-                            //File file = snapToFile((ScrollView) topView.findViewById(R.id.layout_snap), "snap.jpg");
+                            //File file = snapToFile((ScrollView) topView.findViewById(R.id.layout_snap), "share.jpg");
                             if (uri != null) {
                                 //Uri uri = Uri.fromFile(file);
                                 Intent shareIntent = new Intent();
@@ -76,7 +76,7 @@ class TextSnaper {
                                 shareIntent.setDataAndType(uri, mContext.getContentResolver().getType(uri));
                                 shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
                                 Intent intent = Intent.createChooser(shareIntent, mContext.getString(R.string.share));
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 mContext.startActivity(intent);
                             } else {
                                 Toast.makeText(mContext, mContext.getString(R.string.failed_share_snap),
@@ -260,7 +260,7 @@ class TextSnaper {
                     "com.tencent.mm.ui.tools.ShareToTimeLineUI");
             intent.setComponent(comp);
             intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setType("image/*");
             ArrayList<Uri> uris = new ArrayList<>();
             uris.add(Uri.fromFile(file));
@@ -282,7 +282,7 @@ class TextSnaper {
                     "com.tencent.mm.ui.tools.ShareImgUI");
             intent.setComponent(comp);
             intent.setAction(Intent.ACTION_SEND);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setType("image/*");
 
             mContext.grantUriPermission("com.tencent.mm", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -302,8 +302,14 @@ class TextSnaper {
                 if (!folder.mkdirs()) {
                     return null;
                 }
+            } else {
+                for (File child : folder.listFiles()) {
+                    child.delete();
+                }
             }
-            File file = new File(folder, "snap.jpg");
+
+            //
+            File file = new File(folder, String.valueOf(System.currentTimeMillis()) + ".jpg");
             FileOutputStream ostream = new FileOutputStream(file);
 
             int totalHeight = view.getChildAt(0).getHeight();
