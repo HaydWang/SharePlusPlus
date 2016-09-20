@@ -10,6 +10,7 @@ import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -43,8 +44,13 @@ public class ClipboardService extends Service {
         mClipboardManager.addPrimaryClipChangedListener(mClipChangedListener);
     }
 
+    public final static String PRES_NAME = "prefs_snaptext";
+    public final static String PREFS_SERVICE = "service";
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        SharedPreferences prefs = this.getSharedPreferences(
+                PRES_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putBoolean(PREFS_SERVICE, true).apply();
         return START_STICKY;
     }
 

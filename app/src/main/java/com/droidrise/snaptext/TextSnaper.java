@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import static android.support.v4.content.FileProvider.getUriForFile;
 
@@ -35,30 +36,30 @@ import static android.support.v4.content.FileProvider.getUriForFile;
  * Created by a22460 on 16/9/14.
  */
 
-public class TextSnaper {
+class TextSnaper {
     private final static String IMAGE_FOLDER = ".snaptext";
     private final static String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
-    protected Context mContext;
-    protected WindowManager.LayoutParams mLayoutParams;
-    protected View topView;
+    private Context mContext;
+    private WindowManager.LayoutParams mLayoutParams;
+    private View topView;
 
-    protected CircleButton.OnCircleButtonClickListener circleButtonClickListener =
+    private CircleButton.OnCircleButtonClickListener circleButtonClickListener =
             new CircleButton.OnCircleButtonClickListener() {
                 @Override
                 public void onClick(int index) {
                     switch (index) {
                         case R.id.button_wechat:
-                            // Wechat converstaion accept internal Uri.
+                            // Wechat conversion accept internal Uri.
                             shareToFriend();
                             dismissTopView();
                             break;
                         case R.id.button_moments:
-                            // Wechat moment only accept external file, need check permission.
+                            // TODO Wechat moment only accept external file, need check permission.
                             if (ContextCompat.checkSelfPermission(mContext,
                                     android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                     != PackageManager.PERMISSION_GRANTED) {
-                                // Request permission
+                                dismissTopView();
                             } else {
                                 shareToMoments();
                                 dismissTopView();
@@ -66,14 +67,16 @@ public class TextSnaper {
                             break;
                         case R.id.button_share:
                             Uri uri = snapToCache((ScrollView) topView.findViewById(R.id.layout_snap));
+                            //File file = snapToFile((ScrollView) topView.findViewById(R.id.layout_snap), "snap.jpg");
                             if (uri != null) {
+                                //Uri uri = Uri.fromFile(file);
                                 Intent shareIntent = new Intent();
                                 shareIntent.setAction(Intent.ACTION_SEND);
                                 shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                 shareIntent.setDataAndType(uri, mContext.getContentResolver().getType(uri));
                                 shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
                                 Intent intent = Intent.createChooser(shareIntent, mContext.getString(R.string.share));
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                                 mContext.startActivity(intent);
                             } else {
                                 Toast.makeText(mContext, mContext.getString(R.string.failed_share_snap),
@@ -82,16 +85,22 @@ public class TextSnaper {
                             dismissTopView();
                             break;
                         case R.id.button_save:
-                            // Check storage permission
-                            String file = saveFile((ScrollView) topView.findViewById(R.id.layout_snap));
-                            if (file != null) {
-                                Toast.makeText(mContext, mContext.getString(R.string.saved),
-                                        Toast.LENGTH_SHORT).show();
+                            // TODO Check storage permission
+                            if (ContextCompat.checkSelfPermission(mContext,
+                                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                    != PackageManager.PERMISSION_GRANTED) {
+                                dismissTopView();
                             } else {
-                                Toast.makeText(mContext, mContext.getString(R.string.failed_share_snap),
-                                        Toast.LENGTH_SHORT).show();
+                                String imgSaved = saveFile((ScrollView) topView.findViewById(R.id.layout_snap));
+                                if (imgSaved != null) {
+                                    Toast.makeText(mContext, mContext.getString(R.string.saved),
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(mContext, mContext.getString(R.string.failed_share_snap),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                                dismissTopView();
                             }
-                            dismissTopView();
                             break;
                         default:
                             Toast.makeText(mContext, "Un-handle button", Toast.LENGTH_SHORT).show();
@@ -100,11 +109,34 @@ public class TextSnaper {
                 }
             };
 
-    public TextSnaper(Context context) {
+    private static final int MY_PERMISSIONS_REQUEST_MOMENTS = 1;
+    private static final int MY_PERMISSIONS_REQUEST_SAVE = 2;
+
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_SAVE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    TextSnaper(Context context) {
         mContext = context;
     }
 
-    public void showContent(String content, String source) {
+    void showContent(String content, String source) {
         if (topView != null) {
             // dismiss previously top view
             dismissTopView();
@@ -159,7 +191,7 @@ public class TextSnaper {
 
         circleButton = (CircleButton) topView.findViewById(R.id.button_share);
         circleButton.setOnCircleButtonClickListener(circleButtonClickListener, R.id.button_share);
-        circleButton.setDrawable(ContextCompat.getDrawable(mContext, android.R.drawable.ic_menu_share));
+        circleButton.setDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_share));
         int dimensionInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 24, mContext.getResources().getDisplayMetrics());
         circleButton.getImageView().getLayoutParams().height = dimensionInDp;
@@ -196,7 +228,7 @@ public class TextSnaper {
         });
     }
 
-    protected void updateFrameLayout(View view) {
+    private void updateFrameLayout(View view) {
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
 
         DisplayMetrics metrics = new DisplayMetrics();
@@ -211,7 +243,7 @@ public class TextSnaper {
         wm.updateViewLayout(view, mLayoutParams);
     }
 
-    protected void dismissTopView() {
+    private void dismissTopView() {
         if (topView != null) {
             WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
             wm.removeView(topView);
@@ -228,7 +260,7 @@ public class TextSnaper {
                     "com.tencent.mm.ui.tools.ShareToTimeLineUI");
             intent.setComponent(comp);
             intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
             intent.setType("image/*");
             ArrayList<Uri> uris = new ArrayList<>();
             uris.add(Uri.fromFile(file));
@@ -243,13 +275,14 @@ public class TextSnaper {
 
     private void shareToFriend() {
         Uri uri = snapToCache((ScrollView) topView.findViewById(R.id.layout_snap));
+        //File file = snapToFile((ScrollView) topView.findViewById(R.id.layout_snap), "snap.jpg");
         if (uri != null) {
             Intent intent = new Intent();
             ComponentName comp = new ComponentName("com.tencent.mm",
                     "com.tencent.mm.ui.tools.ShareImgUI");
             intent.setComponent(comp);
             intent.setAction(Intent.ACTION_SEND);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
             intent.setType("image/*");
 
             mContext.grantUriPermission("com.tencent.mm", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -263,11 +296,12 @@ public class TextSnaper {
     }
 
     private Uri snapToCache(ScrollView view) {
-        Uri contentUri = null;
         try {
             File folder = new File(mContext.getCacheDir(), "cache");
             if (!folder.exists()) {
-                folder.mkdirs();
+                if (!folder.mkdirs()) {
+                    return null;
+                }
             }
             File file = new File(folder, "snap.jpg");
             FileOutputStream ostream = new FileOutputStream(file);
@@ -278,23 +312,24 @@ public class TextSnaper {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
             ostream.close();
 
-            contentUri = getUriForFile(mContext, "com.droidrise.snaptext.fileprovider", file);
+            return getUriForFile(mContext, "com.droidrise.snaptext.fileprovider", file);
         } catch (IOException e) {
             e.printStackTrace();
-            contentUri = null;
         }
 
-        return contentUri;
+        return null;
     }
 
     private File snapToFile(ScrollView view, String fileName) {
         File folder = new File(Environment.getExternalStorageDirectory(), IMAGE_FOLDER);
         if (!folder.exists()) {
-            folder.mkdirs();
+            if (!folder.mkdirs()) {
+                return null;
+            }
         }
-        File file = new File(folder, fileName);
 
         try {
+            File file = new File(folder, fileName);
             FileOutputStream ostream = new FileOutputStream(file);
 
             int totalHeight = view.getChildAt(0).getHeight();
@@ -302,11 +337,12 @@ public class TextSnaper {
             Bitmap bitmap = getBitmapFromView(view, totalHeight, totalWidth);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
             ostream.close();
+            return file;
         } catch (IOException e) {
             e.printStackTrace();
-            file = null;
         }
-        return file;
+
+        return null;
     }
 
     private String saveFile(ScrollView view) {
@@ -314,8 +350,8 @@ public class TextSnaper {
         int totalWidth = view.getChildAt(0).getWidth();
         Bitmap bitmap = getBitmapFromView(view, totalHeight, totalWidth);
 
-        String date = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss").format(new java.util.Date());
-        String imgSaved = MediaStore.Images.Media.insertImage(
+        String date = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss", Locale.getDefault()).format(new java.util.Date());
+        return MediaStore.Images.Media.insertImage(
                 mContext.getContentResolver(), bitmap,
                 "SnapText_" + date + ".png", "SnapText");
 
@@ -333,9 +369,7 @@ public class TextSnaper {
 //                    cursor.close();
 //                }
 //            }
-//        }
-
-        return imgSaved;
+//       }
     }
 
     private static final int MAX_HEIGHT = 2048;
@@ -361,7 +395,7 @@ public class TextSnaper {
         return canvasBitmap;
     }
 
-    private final boolean isPackageInstalled(String packagename) {
+    private boolean isPackageInstalled(String packagename) {
         PackageManager packageManager = mContext.getPackageManager();
         try {
             packageManager.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);

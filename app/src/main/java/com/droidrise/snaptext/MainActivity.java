@@ -1,11 +1,16 @@
 package com.droidrise.snaptext;
 
 import android.app.AppOpsManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -14,10 +19,61 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+
+    public static class PrefsFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.preferences);
+
+            SharedPreferences prefs = getActivity().getSharedPreferences(
+                    ClipboardService.PRES_NAME, Context.MODE_PRIVATE);
+            boolean service = prefs.getBoolean(ClipboardService.PREFS_SERVICE, false);
+            SwitchPreference prefService = (SwitchPreference) getPreferenceManager().findPreference("prefService");
+            prefService.setChecked(service);
+
+            boolean usageAccess = false;
+            // Only need USAGE_ACCESS for API 21 and beyond
+            if (Build.VERSION.SDK_INT >= 21) {
+                usageAccess = checkUsageAccessGranted(getActivity());
+            } else {
+                // TODO check permission
+            }
+            SwitchPreference prefAccess = (SwitchPreference) getPreferenceManager().findPreference("prefRecentTask");
+            prefAccess.setChecked(usageAccess);
+            prefAccess.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object o) {
+                    boolean isAccessing = (Boolean) o;
+
+                    if (!isAccessing) {
+                        //TODO: Disable copy source
+                        return true;
+                    } else {
+                        //enable copy source
+                        if (Build.VERSION.SDK_INT >= 21) {
+                            if (checkUsageAccessGranted(getActivity())) {
+                                return true;
+                            } else {
+                                // TODO: check result
+                                Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                                startActivity(intent);
+
+                                return false;
+                            }
+                        } else {
+                            // TODO check permission
+                        }
+                    }
+
+                    return false;
+                }
+            });
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,34 +88,28 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Request permission
-            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                Toast.makeText(this, "expanation", Toast.LENGTH_SHORT).show();
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-            }
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
         }
 
-        // Only need USAGE_ACCESS for API 21 and beyond
-        if (Build.VERSION.SDK_INT >= 21) {
-            if (!checkUsageAccessGranted()) {
-                // TODO: prompt description
-                Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-                startActivity(intent);
-            }
-        }
+        // Display the fragment as the main content.
+        getFragmentManager().beginTransaction()
+                .replace(R.id.content_main, new PrefsFragment()).commit();
+
+//        if (!checkUsageAccessGranted()) {
+//            // TODO: prompt description
+//            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+//            startActivity(intent);
+//        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    protected boolean checkUsageAccessGranted() {
+    protected static boolean checkUsageAccessGranted(Context context) {
         try {
-            PackageManager packageManager = getPackageManager();
-            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
-            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(APP_OPS_SERVICE);
+            PackageManager packageManager = context.getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), 0);
+            AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(APP_OPS_SERVICE);
             int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
                     applicationInfo.uid, applicationInfo.packageName);
             return (mode == AppOpsManager.MODE_ALLOWED);

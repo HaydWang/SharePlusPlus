@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:theme="@style/PreferenceScreen">
+    <PreferenceCategory
+        android:title="@string/pref_service_settings_title"
+        android:theme="@style/PreferenceScreen">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefService"
+            android:summary="@string/pref_snaptext_summary"
+            android:title="@string/pref_snaptext_title"></SwitchPreference>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_other_settings_title">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefRecentTask"
+            android:summary="@string/pref_app_usage_summary"
+            android:title="@string/pref_app_usage_title"></SwitchPreference>
+    </PreferenceCategory>
+
+    <Preference
+        android:key="pref_static_field_key"
+        android:selectable="false"
+        android:persistent="false"
+        android:title="@string/version"
+        android:summary="@string/versionName" />
+</PreferenceScreen>

@@ -14,4 +14,13 @@
     <string name="snap_from">From</string>
 
     <string name="failed_share_snap">Failed to share snap.</string>
+
+    <string name="pref_service_settings_title">Service Settings</string>
+    <string name="pref_snaptext_summary">Enable SnapText service to monitor clipboard</string>
+    <string name="pref_snaptext_title">SnapText Service</string>
+
+    <string name="pref_other_settings_title">Other Settings</string>
+    <string name="pref_app_usage_summary">Enable check apps usage accessing to get copy source</string>
+    <string name="pref_app_usage_title">Get Copy Source</string>
+    <string name="version">Version</string>
 </resources>
