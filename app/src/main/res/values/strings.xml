@@ -19,8 +19,15 @@
     <string name="pref_snaptext_summary">Enable SnapText service to monitor clipboard</string>
     <string name="pref_snaptext_title">SnapText Service</string>
 
-    <string name="pref_other_settings_title">Other Settings</string>
+    <string name="pref_other_settings_title">Others</string>
     <string name="pref_app_usage_summary">Enable check apps usage accessing to get copy source</string>
     <string name="pref_app_usage_title">Get Copy Source</string>
     <string name="version">Version</string>
+
+    <string name="pref_app_info">SnapText converts any texts copied from any apps into a picture, to save or share it.</string>
+    <string name="feedback_email">Feedback</string>
+    <string name="email_subject">[SnapText] Version 1.00.000 - Feedback</string>
+    <string name="email_sending">Send email...</string>
+    <string name="no_email_client">No email clients installed.</string>
+    <string name="enable_usage_access_alert">Please click "SnapText" and check ON Permit usage access in next screen.</string>
 </resources>

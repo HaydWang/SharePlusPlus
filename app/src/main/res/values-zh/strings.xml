@@ -14,4 +14,17 @@
     <string name="date_format">yyyy年M月d日 aK:mm</string>
     <string name="snap_from">摘录自</string>
     <string name="failed_share_snap">分享出错了。</string>
+    <string name="pref_app_info">字画(SnapText) 将您在任何应用中复制的文字内容转换为一张图片, 并保存或者共享给朋友们。</string>
+    <string name="pref_app_usage_summary">允许字画查看应用使用情况, 以便于获取文字的来源信息。</string>
+    <string name="pref_other_settings_title">其他</string>
+    <string name="pref_service_settings_title">服务设置</string>
+    <string name="pref_snaptext_summary">启动字画服务,以自动转换复制的文字信息。</string>
+    <string name="pref_snaptext_title">运行</string>
+    <string name="pref_app_usage_title">获取文字来源</string>
+    <string name="version">版本</string>
+    <string name="feedback_email">反馈问题</string>
+    <string name="email_sending">发送电子邮件...</string>
+    <string name="email_subject">[SnapText] Version 1.00.000 - Feedback</string>
+    <string name="no_email_client">未安装电子邮件应用,无法发送邮件。</string>
+    <string name="enable_usage_access_alert">请在接下来的设置页面中选择 \"字画\" , 并开启 \"允许访问使用记录\" 。</string>
 </resources>

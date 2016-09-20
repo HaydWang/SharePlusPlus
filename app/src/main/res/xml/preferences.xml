@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:theme="@style/PreferenceScreen">
+
+    <Preference
+        android:key="pref_static_field_key"
+        android:selectable="false"
+        android:persistent="false"
+        android:summary="@string/pref_app_info" />
+
     <PreferenceCategory
         android:title="@string/pref_service_settings_title"
         android:theme="@style/PreferenceScreen">
+
         <SwitchPreference
             android:defaultValue="false"
             android:key="prefService"
             android:summary="@string/pref_snaptext_summary"
             android:title="@string/pref_snaptext_title"></SwitchPreference>
-    </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_other_settings_title">
         <SwitchPreference
             android:defaultValue="false"
             android:key="prefRecentTask"
@@ -19,10 +25,21 @@
             android:title="@string/pref_app_usage_title"></SwitchPreference>
     </PreferenceCategory>
 
-    <Preference
-        android:key="pref_static_field_key"
-        android:selectable="false"
-        android:persistent="false"
-        android:title="@string/version"
-        android:summary="@string/versionName" />
+
+    <PreferenceCategory android:title="@string/pref_other_settings_title">
+
+        <Preference
+            android:key="pref_feedback"
+            android:selectable="true"
+            android:persistent="true"
+            android:title="@string/feedback_email" />
+
+        <Preference
+            android:key="pref_static_field_key"
+            android:selectable="false"
+            android:persistent="false"
+            android:title="@string/version"
+            android:summary="@string/versionName" />
+
+    </PreferenceCategory>
 </PreferenceScreen>

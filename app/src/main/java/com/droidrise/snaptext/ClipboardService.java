@@ -44,13 +44,12 @@ public class ClipboardService extends Service {
         mClipboardManager.addPrimaryClipChangedListener(mClipChangedListener);
     }
 
-    public final static String PRES_NAME = "prefs_snaptext";
-    public final static String PREFS_SERVICE = "service";
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         SharedPreferences prefs = this.getSharedPreferences(
-                PRES_NAME, Context.MODE_PRIVATE);
-        prefs.edit().putBoolean(PREFS_SERVICE, true).apply();
+                MainActivity.PRES_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putBoolean(MainActivity.PREFS_SERVICE, true).apply();
+
         return START_STICKY;
     }
 
@@ -96,12 +95,19 @@ public class ClipboardService extends Service {
         }
     }
 
-    // TODO need test API20. and fix the issue when no activity switched
+    // TODO need test API20
     protected String getForgroundActivity() {
-        if (Build.VERSION.SDK_INT < 21)
-            return getAppLable(getPreLollipop());
-        else
-            return getAppLable(getLollipop());
+        SharedPreferences prefs = getSharedPreferences(
+                MainActivity.PRES_NAME, Context.MODE_PRIVATE);
+        if (prefs.getBoolean(MainActivity.PREFS_COPY_SOURCE, true)) {
+            if (Build.VERSION.SDK_INT < 21) {
+                return getAppLable(getPreLollipop());
+            } else {
+                return getAppLable(getLollipop());
+            }
+        } else {
+            return null;
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -117,7 +123,7 @@ public class ClipboardService extends Service {
     protected String getLollipop() {
         UsageStatsManager usm = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
         long time = System.currentTimeMillis();
-        List<UsageStats> applist = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 10 * 1000, time);
+        List<UsageStats> applist = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 30 * 60 * 1000, time);
         if (applist != null && applist.size() > 0) {
             SortedMap<Long, UsageStats> mySortedMap = new TreeMap<>();
             for (UsageStats usageStats : applist) {
