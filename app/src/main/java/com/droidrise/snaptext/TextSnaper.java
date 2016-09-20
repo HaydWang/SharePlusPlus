@@ -3,6 +3,7 @@ package com.droidrise.snaptext;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,6 +13,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -34,7 +36,8 @@ import static android.support.v4.content.FileProvider.getUriForFile;
  */
 
 public class TextSnaper {
-    protected final static String IMAGE_FOLDER = ".snaptext";
+    private final static String IMAGE_FOLDER = ".snaptext";
+    private final static String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
     protected Context mContext;
     protected WindowManager.LayoutParams mLayoutParams;
@@ -46,19 +49,49 @@ public class TextSnaper {
                 public void onClick(int index) {
                     switch (index) {
                         case R.id.button_wechat:
+                            // Wechat converstaion accept internal Uri.
                             shareToFriend();
                             dismissTopView();
                             break;
                         case R.id.button_moments:
-                            shareToMoments();
+                            // Wechat moment only accept external file, need check permission.
+                            if (ContextCompat.checkSelfPermission(mContext,
+                                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                    != PackageManager.PERMISSION_GRANTED) {
+                                // Request permission
+                            } else {
+                                shareToMoments();
+                                dismissTopView();
+                            }
+                            break;
+                        case R.id.button_share:
+                            Uri uri = snapToCache((ScrollView) topView.findViewById(R.id.layout_snap));
+                            if (uri != null) {
+                                Intent shareIntent = new Intent();
+                                shareIntent.setAction(Intent.ACTION_SEND);
+                                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                shareIntent.setDataAndType(uri, mContext.getContentResolver().getType(uri));
+                                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                                Intent intent = Intent.createChooser(shareIntent, mContext.getString(R.string.share));
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                mContext.startActivity(intent);
+                            } else {
+                                Toast.makeText(mContext, mContext.getString(R.string.failed_share_snap),
+                                        Toast.LENGTH_SHORT).show();
+                            }
                             dismissTopView();
                             break;
                         case R.id.button_save:
+                            // Check storage permission
                             String file = saveFile((ScrollView) topView.findViewById(R.id.layout_snap));
                             if (file != null) {
                                 Toast.makeText(mContext, mContext.getString(R.string.saved),
                                         Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(mContext, mContext.getString(R.string.failed_share_snap),
+                                        Toast.LENGTH_SHORT).show();
                             }
+                            dismissTopView();
                             break;
                         default:
                             Toast.makeText(mContext, "Un-handle button", Toast.LENGTH_SHORT).show();
@@ -106,17 +139,27 @@ public class TextSnaper {
 
         CircleButton circleButton = (CircleButton) topView.findViewById(R.id.button_wechat);
         circleButton.setOnCircleButtonClickListener(circleButtonClickListener, R.id.button_wechat);
-        circleButton.setDrawable(mContext.getDrawable(R.drawable.sample_flat_136));
+        circleButton.setDrawable(ContextCompat.getDrawable(mContext, R.drawable.sample_flat_136));
         circleButton.setText(mContext.getString(R.string.wechat_friend));
+        if (!isPackageInstalled(WECHAT_PACKAGE_NAME)) {
+            circleButton.setVisibility(View.GONE);
+        } else {
+            circleButton.setVisibility(View.VISIBLE);
+        }
 
         circleButton = (CircleButton) topView.findViewById(R.id.button_moments);
         circleButton.setOnCircleButtonClickListener(circleButtonClickListener, R.id.button_moments);
-        circleButton.setDrawable(mContext.getDrawable(R.drawable.sample_flat_137));
+        circleButton.setDrawable(ContextCompat.getDrawable(mContext, R.drawable.sample_flat_137));
         circleButton.setText(mContext.getString(R.string.wechat_moment));
+        if (!isPackageInstalled(WECHAT_PACKAGE_NAME)) {
+            circleButton.setVisibility(View.GONE);
+        } else {
+            circleButton.setVisibility(View.VISIBLE);
+        }
 
         circleButton = (CircleButton) topView.findViewById(R.id.button_share);
         circleButton.setOnCircleButtonClickListener(circleButtonClickListener, R.id.button_share);
-        circleButton.setDrawable(mContext.getDrawable(android.R.drawable.ic_menu_share));
+        circleButton.setDrawable(ContextCompat.getDrawable(mContext, android.R.drawable.ic_menu_share));
         int dimensionInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 24, mContext.getResources().getDisplayMetrics());
         circleButton.getImageView().getLayoutParams().height = dimensionInDp;
@@ -126,7 +169,7 @@ public class TextSnaper {
 
         circleButton = (CircleButton) topView.findViewById(R.id.button_save);
         circleButton.setOnCircleButtonClickListener(circleButtonClickListener, R.id.button_save);
-        circleButton.setDrawable(mContext.getDrawable(R.drawable.ic_save));
+        circleButton.setDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_save));
         dimensionInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 24, mContext.getResources().getDisplayMetrics());
         circleButton.getImageView().getLayoutParams().height = dimensionInDp;
@@ -316,5 +359,15 @@ public class TextSnaper {
         canvas.restore();
 
         return canvasBitmap;
+    }
+
+    private final boolean isPackageInstalled(String packagename) {
+        PackageManager packageManager = mContext.getPackageManager();
+        try {
+            packageManager.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 }
