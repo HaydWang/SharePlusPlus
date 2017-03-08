@@ -10,13 +10,13 @@ android {
         }
     }
     compileSdkVersion 24
-    buildToolsVersion "24.0.0"
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.droidrise.snaptext"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.00.000"
+        versionCode 101000
+        versionName "1.01.000"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }
