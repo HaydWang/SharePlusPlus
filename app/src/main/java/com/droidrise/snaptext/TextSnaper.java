@@ -32,6 +32,8 @@ import java.util.Locale;
 
 import static android.support.v4.content.FileProvider.getUriForFile;
 
+import uk.co.chrisjenx.calligraphy.TypefaceUtils;
+
 /**
  * Created by a22460 on 16/9/14.
  */
@@ -152,21 +154,25 @@ class TextSnaper {
             }
         });
 
-        TextView tx = (TextView) topView.findViewById(R.id.text_content);
-        tx.setText(content);
+        TextView tv = (TextView) topView.findViewById(R.id.text_content);
+        tv.setTypeface(TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/default.otf"));
+        tv.setText(content);
 
-        TextView tvTime = (TextView) topView.findViewById(R.id.text_timestamp);
-        tvTime.setText(new SimpleDateFormat(mContext.getString(R.string.date_format)).format(new java.util.Date()));
+        tv = (TextView) topView.findViewById(R.id.text_timestamp);
+        tv.setTypeface(TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/default.otf"));
+        tv.setText(new SimpleDateFormat(mContext.getString(R.string.date_format)).format(new java.util.Date()));
 
-        TextView tvSign = (TextView) topView.findViewById(R.id.text_signature);
-        tvSign.setText(mContext.getString(R.string.sent_via_sanptext));
+        tv = (TextView) topView.findViewById(R.id.text_signature);
+        tv.setTypeface(TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/default.otf"));
+        tv.setText(mContext.getString(R.string.sent_via_sanptext));
 
-        TextView tvDataSource = (TextView) topView.findViewById(R.id.text_data_source);
+        tv = (TextView) topView.findViewById(R.id.text_data_source);
+        tv.setTypeface(TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/default.otf"));
         if (source != null) {
-            tvDataSource.setText(mContext.getString(R.string.snap_from) + " " + source);
-            tvDataSource.setVisibility(View.VISIBLE);
+            tv.setText(mContext.getString(R.string.snap_from) + " " + source);
+            tv.setVisibility(View.VISIBLE);
         } else {
-            tvDataSource.setVisibility(View.GONE);
+            tv.setVisibility(View.GONE);
         }
 
         CircleButton circleButton = (CircleButton) topView.findViewById(R.id.button_wechat);
