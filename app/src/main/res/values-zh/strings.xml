@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">字画</string>
-    <string name="sent_via_sanptext">发送自 字画</string>
+    <string name="sent_via_sanptext">字画</string>
     <string name="action_settings">设置</string>
 
     <string name="wechat_friend">微信</string>
@@ -11,7 +11,7 @@
     <string name="saved">摘录已保存至照片库中。</string>
     <string name="cancel">取消</string>
 
-    <string name="date_format">yyyy年M月d日 aK:mm</string>
+    <string name="date_format">yyyy.M.d h:mm</string>
     <string name="snap_from">摘录自</string>
     <string name="failed_share_snap">分享出错了。</string>
     <string name="pref_app_info">字画(SnapText) 将您在任何应用中复制的文字内容转换为一张图片, 并保存或者共享给朋友们。</string>

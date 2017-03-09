@@ -10,7 +10,7 @@
     <string name="saved">Snap saved to Gallery Pictures folder.</string>
     <string name="cancel">Cancel</string>
 
-    <string name="date_format">MMM.d yyyy K:mm a</string>
+    <string name="date_format">M/d/yyyy h:mm</string>
     <string name="snap_from">From</string>
 
     <string name="failed_share_snap">Failed to share snap.</string>
