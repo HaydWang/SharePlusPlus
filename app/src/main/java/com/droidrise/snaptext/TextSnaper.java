@@ -41,6 +41,8 @@ class TextSnaper {
     private final static String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
     private Context mContext;
+    private Typeface mFontTitle;
+    private Typeface mFontContent;
     private WindowManager.LayoutParams mLayoutParams;
     private View topView;
 
@@ -136,14 +138,15 @@ class TextSnaper {
 
     TextSnaper(Context context) {
         mContext = context;
+
+        mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/FZSongKeBenXiuKaiS-R-GB.otf");
+        mFontTitle = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/Traditional.otf");
     }
 
     void showContent(String content, String source) {
         if (topView != null) {
-            // dismiss previously top view
             dismissTopView();
         }
-        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         topView = View.inflate(mContext, R.layout.view_image, null);
 
         ImageButton btnClose = (ImageButton) topView.findViewById(R.id.button_exit);
@@ -154,28 +157,30 @@ class TextSnaper {
             }
         });
 
-        Typeface fontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/FZSongKeBenXiuKaiS-R-GB.otf");
-        Typeface fontTitle = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/Traditional.otf");
         TextView tv = (TextView) topView.findViewById(R.id.text_content);
-        tv.setTypeface(fontContent);
+        tv.setTypeface(mFontContent);
         tv.setText(content);
 
+        tv = (TextView) topView.findViewById(R.id.text_data_source);
+        tv.setTypeface(mFontTitle);
+        if (source != null) {
+            tv.setText(mContext.getString(R.string.snap_from) + " " + source);
+        } else {
+            // Show time stamp as title
+            if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
+                tv.setText(CNDateUtility.getFullCNDate());
+            } else {
+                tv.setText(new SimpleDateFormat(mContext.getString(R.string.date_format)).format(new java.util.Date()));
+            }
+        }
+
         tv = (TextView) topView.findViewById(R.id.text_timestamp);
-        tv.setTypeface(fontTitle);
+        tv.setTypeface(mFontTitle);
         tv.setText(new SimpleDateFormat(mContext.getString(R.string.date_format)).format(new java.util.Date()));
 
         tv = (TextView) topView.findViewById(R.id.text_signature);
-        tv.setTypeface(fontTitle);
+        tv.setTypeface(mFontTitle);
         tv.setText(mContext.getString(R.string.sent_via_sanptext));
-
-        tv = (TextView) topView.findViewById(R.id.text_data_source);
-        tv.setTypeface(fontTitle);
-        if (source != null) {
-            tv.setText(mContext.getString(R.string.snap_from) + " " + source);
-            tv.setVisibility(View.VISIBLE);
-        } else {
-            tv.setVisibility(View.GONE);
-        }
 
         ImageButton button = (ImageButton) topView.findViewById(R.id.button_wechat);
         button.setOnClickListener(ImageButtonClickListener);
@@ -199,6 +204,14 @@ class TextSnaper {
         button = (ImageButton) topView.findViewById(R.id.button_save);
         button.setOnClickListener(ImageButtonClickListener);
 
+        button = (ImageButton) topView.findViewById(R.id.button_close);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismissTopView();
+            }
+        });
+
         int w = WindowManager.LayoutParams.WRAP_CONTENT;
         int h = WindowManager.LayoutParams.WRAP_CONTENT;
 
@@ -208,6 +221,8 @@ class TextSnaper {
         mLayoutParams =
                 new WindowManager.LayoutParams(w, h, type, flags, PixelFormat.TRANSPARENT);
         mLayoutParams.gravity = Gravity.TOP;
+
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         wm.addView(topView, mLayoutParams);
 
         topView.post(new Runnable() {
@@ -220,15 +235,13 @@ class TextSnaper {
 
     private void updateFrameLayout(View view) {
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-
         DisplayMetrics metrics = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(metrics);
 
-        int target = (int) (metrics.heightPixels * 0.8);
+        int target = (int) (metrics.heightPixels * 1);
         if (view.getHeight() > target) {
             mLayoutParams.height = target;
         }
-        //mLayoutParams.width = view.getWidth();
         mLayoutParams.width = metrics.widthPixels;
 
         wm.updateViewLayout(view, mLayoutParams);
@@ -303,7 +316,7 @@ class TextSnaper {
             File file = new File(folder, String.valueOf(System.currentTimeMillis()) + ".jpg");
             FileOutputStream ostream = new FileOutputStream(file);
 
-            Bitmap bitmap = getBitmapFromView(view);
+            Bitmap bitmap = getBitmapFromView(view.getChildAt(0));
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
             ostream.close();
 
@@ -327,7 +340,7 @@ class TextSnaper {
             File file = new File(folder, fileName);
             FileOutputStream ostream = new FileOutputStream(file);
 
-            Bitmap bitmap = getBitmapFromView(view);
+            Bitmap bitmap = getBitmapFromView(view.getChildAt(0));
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
             ostream.close();
             return file;
@@ -339,7 +352,7 @@ class TextSnaper {
     }
 
     private String saveFile(ScrollView view) {
-        Bitmap bitmap = getBitmapFromView(view);
+        Bitmap bitmap = getBitmapFromView(view.getChildAt(0));
 
         String date = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss", Locale.getDefault()).format(new java.util.Date());
         return MediaStore.Images.Media.insertImage(

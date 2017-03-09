@@ -10,7 +10,8 @@
     <string name="saved">Snap saved to Gallery Pictures folder.</string>
     <string name="cancel">Cancel</string>
 
-    <string name="date_format">M/d/yyyy h:mm</string>
+    <string name="date_format_title">MMM.d yyyy</string>
+    <string name="date_format">M/d/yyyy K:mm a</string>
     <string name="snap_from">From</string>
 
     <string name="failed_share_snap">Failed to share snap.</string>
@@ -26,7 +27,7 @@
 
     <string name="pref_app_info">SnapText converts any texts copied from any apps into a picture, to save or share it.</string>
     <string name="feedback_email">Feedback</string>
-    <string name="email_subject">[SnapText] Version 1.00.000 - Feedback</string>
+    <string name="email_subject">[SnapText] - Feedback</string>
     <string name="email_sending">Send email...</string>
     <string name="no_email_client">No email clients installed.</string>
     <string name="enable_usage_access_alert">Please click "SnapText" and check ON Permit usage access in next screen.</string>

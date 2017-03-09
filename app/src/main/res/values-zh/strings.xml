@@ -11,7 +11,7 @@
     <string name="saved">摘录已保存至照片库中。</string>
     <string name="cancel">取消</string>
 
-    <string name="date_format">yyyy.M.d h:mm</string>
+    <string name="date_format">yyyy.M.d H:mm</string>
     <string name="snap_from">摘录自</string>
     <string name="failed_share_snap">分享出错了。</string>
     <string name="pref_app_info">字画(SnapText) 将您在任何应用中复制的文字内容转换为一张图片, 并保存或者共享给朋友们。</string>
@@ -24,7 +24,7 @@
     <string name="version">版本</string>
     <string name="feedback_email">反馈问题</string>
     <string name="email_sending">发送电子邮件...</string>
-    <string name="email_subject">[SnapText] Version 1.00.000 - Feedback</string>
+    <string name="email_subject">[SnapText] - Feedback</string>
     <string name="no_email_client">未安装电子邮件应用,无法发送邮件。</string>
     <string name="enable_usage_access_alert">请在接下来的设置页面中选择 \"字画\" , 并开启 \"允许访问使用记录\" 。</string>
 </resources>

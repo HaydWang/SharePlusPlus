@@ -7,6 +7,10 @@
     <color name="colorSnapBackground">#F0F0F4</color>
     <color name="colorFrameBackground">#4a4a4a</color>
 
+    <color name="colorBottomButton">#FFFFFF</color>
+    <color name="colorBottomButtonPressed">#9a9a9a</color>
+    <color name="colorBottomButtonStroke">#4a4a4a</color>
+
     <color name="colorSnapTitle">#886E3D</color>
     <!--<color name="colorSnapTitle">#4a4a4a</color>-->
 
