@@ -75,20 +75,26 @@ public class ClipboardService extends Service {
             if (data != null) {
                 ClipDescription description = data.getDescription();
                 if (description != null) {
-                    if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                    ClipData.Item item = data.getItemAt(0);
+                    if (item != null) {
                         String source = getForgroundActivity();
-                        ClipData.Item item = data.getItemAt(0);
-                        String text = item.getText().toString();
-                        mTextSnaper.showContent(text, source);
-                    } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_HTML)) {
-                        String source = getForgroundActivity();
-                        ClipData.Item item = data.getItemAt(0);
-                        String text = item.coerceToText(this).toString();
-                        mTextSnaper.showContent(text, source);
-                    } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_INTENT)) {
-                        // TODO: handle intent
-                    } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_URILIST)) {
-                        // TODO: handle uri
+                        if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                            CharSequence sequence = item.getText();
+                            if (sequence != null) {
+                                String text = sequence.toString();
+                                mTextSnaper.showContent(text, source);
+                            }
+                        } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_HTML)) {
+                            CharSequence sequence = item.coerceToText(this);
+                            if (sequence != null) {
+                                String text = sequence.toString();
+                                mTextSnaper.showContent(text, source);
+                            }
+                        } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_INTENT)) {
+                            // TODO: handle intent
+                        } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_URILIST)) {
+                            // TODO: handle uri
+                        }
                     }
                 }
             }

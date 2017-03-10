@@ -13,10 +13,6 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-/**
- * @author ccheng
- * @Date 3/18/14
- */
 public class JustifyTextView extends TextView {
 
     private int mLineY;
@@ -44,7 +40,6 @@ public class JustifyTextView extends TextView {
         mLineY += getTextSize();
         Layout layout = getLayout();
 
-        // layout.getLayout()在4.4.3出现NullPointerException
         if (layout == null) {
             return;
         }
@@ -54,7 +49,6 @@ public class JustifyTextView extends TextView {
         int textHeight = (int) (Math.ceil(fm.descent - fm.ascent));
         textHeight = (int) (textHeight * layout.getSpacingMultiplier() + layout
                 .getSpacingAdd());
-        //解决了最后一行文字间距过大的问题
         for (int i = 0; i < layout.getLineCount(); i++) {
             int lineStart = layout.getLineStart(i);
             int lineEnd = layout.getLineEnd(i);

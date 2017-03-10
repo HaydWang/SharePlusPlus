@@ -4,21 +4,17 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +28,8 @@ import java.util.Locale;
 
 import static android.support.v4.content.FileProvider.getUriForFile;
 
+import uk.co.chrisjenx.calligraphy.TypefaceUtils;
+
 /**
  * Created by a22460 on 16/9/14.
  */
@@ -41,14 +39,27 @@ class TextSnaper {
     private final static String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
     private Context mContext;
+    private Typeface mFontTitle;
+    private Typeface mFontContent;
     private WindowManager.LayoutParams mLayoutParams;
     private View topView;
 
-    private CircleButton.OnCircleButtonClickListener circleButtonClickListener =
-            new CircleButton.OnCircleButtonClickListener() {
+    TextSnaper(Context context) {
+        mContext = context;
+
+        //mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/fz_lvjiande_jian.otf");
+        //mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/fz_songkebenxiukai_jian.ttf");
+        mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/fz_suxinshiliukai_jian.ttf");
+        mFontTitle = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/traditional.otf");
+    }
+
+    private ImageButton.OnClickListener ImageButtonClickListener =
+            new ImageButton.OnClickListener() {
                 @Override
-                public void onClick(int index) {
-                    switch (index) {
+                public void onClick(View v) {
+                    if (v == null) return;
+
+                    switch (v.getId()) {
                         case R.id.button_wechat:
                             // Wechat conversion accept internal Uri.
                             shareToFriend();
@@ -132,19 +143,13 @@ class TextSnaper {
         }
     }
 
-    TextSnaper(Context context) {
-        mContext = context;
-    }
-
     void showContent(String content, String source) {
         if (topView != null) {
-            // dismiss previously top view
             dismissTopView();
         }
-        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         topView = View.inflate(mContext, R.layout.view_image, null);
 
-        FloatingActionButton btnClose = (FloatingActionButton) topView.findViewById(R.id.button_exit);
+        ImageButton btnClose = (ImageButton) topView.findViewById(R.id.button_exit);
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -152,62 +157,70 @@ class TextSnaper {
             }
         });
 
-        TextView tx = (TextView) topView.findViewById(R.id.text_content);
-        tx.setText(content);
+        TextView tv = (TextView) topView.findViewById(R.id.text_content);
+        if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
+            tv.setTypeface(mFontContent);
+        }
+        tv.setText(content);
 
-        TextView tvTime = (TextView) topView.findViewById(R.id.text_timestamp);
-        tvTime.setText(new SimpleDateFormat(mContext.getString(R.string.date_format)).format(new java.util.Date()));
-
-        TextView tvSign = (TextView) topView.findViewById(R.id.text_signature);
-        tvSign.setText(mContext.getString(R.string.sent_via_sanptext));
-
-        TextView tvDataSource = (TextView) topView.findViewById(R.id.text_data_source);
+        tv = (TextView) topView.findViewById(R.id.text_data_source);
+        tv.setTypeface(mFontTitle);
         if (source != null) {
-            tvDataSource.setText(mContext.getString(R.string.snap_from) + " " + source);
-            tvDataSource.setVisibility(View.VISIBLE);
+            tv.setText(mContext.getString(R.string.snap_from) + " " + source);
+
+            tv = (TextView) topView.findViewById(R.id.text_second_title);
+            if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
+                tv.setTypeface(mFontTitle);
+                tv.setText(CNDateUtility.getFullCNDate());
+            } else {
+                tv.setText(new SimpleDateFormat(mContext.getString(R.string.date_format_title)).format(new java.util.Date()));
+            }
         } else {
-            tvDataSource.setVisibility(View.GONE);
+            // Show time stamp as title
+            if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
+                tv.setText(CNDateUtility.getFullCNDate() + " 记");
+            } else {
+                tv.setText(new SimpleDateFormat(mContext.getString(R.string.date_format)).format(new java.util.Date()));
+            }
         }
 
-        CircleButton circleButton = (CircleButton) topView.findViewById(R.id.button_wechat);
-        circleButton.setOnCircleButtonClickListener(circleButtonClickListener, R.id.button_wechat);
-        circleButton.setDrawable(ContextCompat.getDrawable(mContext, R.drawable.sample_flat_136));
-        circleButton.setText(mContext.getString(R.string.wechat_friend));
+        tv = (TextView) topView.findViewById(R.id.text_timestamp);
+        tv.setTypeface(mFontTitle);
+        tv.setText(new SimpleDateFormat(mContext.getString(R.string.date_format)).format(new java.util.Date()));
+
+        tv = (TextView) topView.findViewById(R.id.text_signature);
+        tv.setTypeface(mFontTitle);
+        tv.setText(mContext.getString(R.string.sent_via_sanptext));
+
+        ImageButton button = (ImageButton) topView.findViewById(R.id.button_wechat);
+        button.setOnClickListener(ImageButtonClickListener);
         if (!isPackageInstalled(WECHAT_PACKAGE_NAME)) {
-            circleButton.setVisibility(View.GONE);
+            button.setVisibility(View.GONE);
         } else {
-            circleButton.setVisibility(View.VISIBLE);
+            button.setVisibility(View.VISIBLE);
         }
 
-        circleButton = (CircleButton) topView.findViewById(R.id.button_moments);
-        circleButton.setOnCircleButtonClickListener(circleButtonClickListener, R.id.button_moments);
-        circleButton.setDrawable(ContextCompat.getDrawable(mContext, R.drawable.sample_flat_137));
-        circleButton.setText(mContext.getString(R.string.wechat_moment));
+        button = (ImageButton) topView.findViewById(R.id.button_moments);
+        button.setOnClickListener(ImageButtonClickListener);
         if (!isPackageInstalled(WECHAT_PACKAGE_NAME)) {
-            circleButton.setVisibility(View.GONE);
+            button.setVisibility(View.GONE);
         } else {
-            circleButton.setVisibility(View.VISIBLE);
+            button.setVisibility(View.VISIBLE);
         }
 
-        circleButton = (CircleButton) topView.findViewById(R.id.button_share);
-        circleButton.setOnCircleButtonClickListener(circleButtonClickListener, R.id.button_share);
-        circleButton.setDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_share));
-        int dimensionInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                24, mContext.getResources().getDisplayMetrics());
-        circleButton.getImageView().getLayoutParams().height = dimensionInDp;
-        circleButton.getImageView().getLayoutParams().width = dimensionInDp;
-        circleButton.getImageView().requestLayout();
-        circleButton.setText(mContext.getString(R.string.share));
+        button = (ImageButton) topView.findViewById(R.id.button_share);
+        button.setOnClickListener(ImageButtonClickListener);
 
-        circleButton = (CircleButton) topView.findViewById(R.id.button_save);
-        circleButton.setOnCircleButtonClickListener(circleButtonClickListener, R.id.button_save);
-        circleButton.setDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_save));
-        dimensionInDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                24, mContext.getResources().getDisplayMetrics());
-        circleButton.getImageView().getLayoutParams().height = dimensionInDp;
-        circleButton.getImageView().getLayoutParams().width = dimensionInDp;
-        circleButton.getImageView().requestLayout();
-        circleButton.setText(mContext.getString(R.string.save));
+        button = (ImageButton) topView.findViewById(R.id.button_save);
+        button.setOnClickListener(ImageButtonClickListener);
+
+        button = (ImageButton) topView.findViewById(R.id.button_close);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismissTopView();
+            }
+        });
 
         int w = WindowManager.LayoutParams.WRAP_CONTENT;
         int h = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -218,6 +231,8 @@ class TextSnaper {
         mLayoutParams =
                 new WindowManager.LayoutParams(w, h, type, flags, PixelFormat.TRANSPARENT);
         mLayoutParams.gravity = Gravity.TOP;
+
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         wm.addView(topView, mLayoutParams);
 
         topView.post(new Runnable() {
@@ -230,15 +245,14 @@ class TextSnaper {
 
     private void updateFrameLayout(View view) {
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-
         DisplayMetrics metrics = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(metrics);
 
-        int target = (int) (metrics.heightPixels * 0.8);
+        int target = (int) (metrics.heightPixels * 1);
         if (view.getHeight() > target) {
             mLayoutParams.height = target;
         }
-        mLayoutParams.width = view.getWidth();
+        mLayoutParams.width = metrics.widthPixels;
 
         wm.updateViewLayout(view, mLayoutParams);
     }
@@ -312,9 +326,7 @@ class TextSnaper {
             File file = new File(folder, String.valueOf(System.currentTimeMillis()) + ".jpg");
             FileOutputStream ostream = new FileOutputStream(file);
 
-            int totalHeight = view.getChildAt(0).getHeight();
-            int totalWidth = view.getChildAt(0).getWidth();
-            Bitmap bitmap = getBitmapFromView(view, totalHeight, totalWidth);
+            Bitmap bitmap = getBitmapFromView(view.getChildAt(0));
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
             ostream.close();
 
@@ -338,9 +350,7 @@ class TextSnaper {
             File file = new File(folder, fileName);
             FileOutputStream ostream = new FileOutputStream(file);
 
-            int totalHeight = view.getChildAt(0).getHeight();
-            int totalWidth = view.getChildAt(0).getWidth();
-            Bitmap bitmap = getBitmapFromView(view, totalHeight, totalWidth);
+            Bitmap bitmap = getBitmapFromView(view.getChildAt(0));
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
             ostream.close();
             return file;
@@ -352,35 +362,19 @@ class TextSnaper {
     }
 
     private String saveFile(ScrollView view) {
-        int totalHeight = view.getChildAt(0).getHeight();
-        int totalWidth = view.getChildAt(0).getWidth();
-        Bitmap bitmap = getBitmapFromView(view, totalHeight, totalWidth);
+        Bitmap bitmap = getBitmapFromView(view.getChildAt(0));
 
         String date = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss", Locale.getDefault()).format(new java.util.Date());
         return MediaStore.Images.Media.insertImage(
                 mContext.getContentResolver(), bitmap,
                 "SnapText_" + date + ".png", "SnapText");
-
-//        if (imgSaved != null) {
-//            Cursor cursor = null;
-//            try {
-//                String[] proj = { MediaStore.Images.Media.DATA };
-//                cursor = mContext.getContentResolver().query(Uri.parse(imgSaved),
-//                        proj, null, null, null);
-//                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-//                cursor.moveToFirst();
-//                imgSaved = cursor.getString(column_index);
-//            } finally {
-//                if (cursor != null) {
-//                    cursor.close();
-//                }
-//            }
-//       }
     }
 
     private static final int MAX_HEIGHT = 2048;
 
-    private Bitmap getBitmapFromView(View view, int totalHeight, int totalWidth) {
+    private Bitmap getBitmapFromView(View view) {
+        int totalHeight = view.getHeight();
+        int totalWidth = view.getWidth();
         int height = Math.min(MAX_HEIGHT, totalHeight);
         float percent = height / (float) totalHeight;
 

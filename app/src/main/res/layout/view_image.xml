@@ -4,30 +4,18 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/colorBottomButtonStroke"
     android:theme="@style/AppTheme.NoActionBar">
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/button_exit"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_gravity="top|end"
-        android:layout_margin="2dp"
-        android:src="@drawable/ic_close"
-        app:elevation="2dp"
-        app:borderWidth="0dp"
-        app:fabSize="mini" />
 
     <ScrollView
         android:id="@+id/layout_snap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="48dp"
         android:layout_gravity="center_horizontal"
         android:scrollbars="none">
 
+        <!-- Snap content view -->
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -38,109 +26,149 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:background="@drawable/shape_textview_border">
+                android:layout_marginTop="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp">
 
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
+                <!-- Title -->
+                <TextView
+                    android:id="@+id/text_data_source"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp"
-                    android:padding="@dimen/activity_vertical_margin"
-                    android:background="@drawable/shape_textview_border">
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorSnapTitle" />
 
-                    <TextView
-                        android:id="@+id/text_data_source"
+                 <!-- Second Title -->
+                <TextView
+                        android:id="@+id/text_second_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:textColor="@color/colorSignature" />
+                        android:textSize="10dp"
+                        android:textColor="@color/colorSnapTitle" />
 
-                    <TextView
-                        android:id="@+id/text_timestamp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:textColor="@color/colorSnapTime" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:layerType="software"
-                        android:layout_marginTop="@dimen/activity_vertical_margin"
-                        android:layout_marginBottom="@dimen/activity_vertical_margin"
-                        android:background="@drawable/shape_border_dash" />
-
-                    <com.droidrise.snaptext.JustifyTextView
+                <!-- Text content -->
+                <com.droidrise.snaptext.JustifyTextView
                         android:id="@+id/text_content"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="serif:"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:layout_marginTop="16dp"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:lineSpacingMultiplier="1.5"
+                        android:typeface="monospace"
                         android:textColor="@color/colorSnapText" />
+            </LinearLayout>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:layout_marginTop="@dimen/activity_vertical_margin"
-                        android:layerType="software"
-                        android:background="@drawable/shape_border_dash" />
+            <!-- Time and signature -->
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@color/colorBottomButtonPressed">
 
-                    <LinearLayout
+                <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/activity_vertical_margin"
-                        android:layout_gravity="right">
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginLeft="24dp"
+                        android:layout_weight="1">
 
-                        <TextView
+                    <TextView
                             android:id="@+id/text_signature"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="4dp"
                             android:layout_gravity="center_vertical"
                             android:textColor="@color/colorSignature" />
 
-                        <ImageView
+                    <ImageView
                             android:layout_width="62dp"
                             android:layout_height="24dp"
+                            android:layout_marginLeft="0dp"
                             android:scaleType="centerInside"
                             android:layout_gravity="center_vertical"
                             android:src="@drawable/google_play_badge" />
 
-                    </LinearLayout>
-
                 </LinearLayout>
+
+                <TextView
+                        android:id="@+id/text_timestamp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="24dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/colorSignature" />
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
+    <!-- Top Button -->
+    <ImageButton android:id="@+id/button_exit"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_close_black_18dp"
+        android:background="@drawable/round_button"/>
+
+    <!-- Bottom Buttons -->
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end">
+        android:layout_marginBottom="6dp"
+        android:layout_gravity="bottom|center_horizontal">
 
-        <com.droidrise.snaptext.CircleButton
+        <ImageButton
             android:id="@+id/button_wechat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="centerInside"
+            android:background="@drawable/round_button"
+            android:src="@drawable/ic_wechat_friends_24dp"/>
 
-        <com.droidrise.snaptext.CircleButton
+        <ImageButton
             android:id="@+id/button_moments"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="16dp"
+            android:scaleType="centerInside"
+            android:background="@drawable/round_button"
+            android:src="@drawable/ic_wechat_moments_24dp"/>
 
-        <com.droidrise.snaptext.CircleButton
+        <ImageButton
             android:id="@+id/button_share"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="16dp"
+            android:scaleType="centerInside"
+            android:background="@drawable/round_button"
+            android:src="@drawable/ic_share_black_24dp"/>
 
-        <com.droidrise.snaptext.CircleButton
+        <ImageButton
             android:id="@+id/button_save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="16dp"
+            android:scaleType="centerInside"
+            android:background="@drawable/round_button"
+            android:src="@drawable/ic_file_save_black_24dp"/>
+
+        <ImageButton
+            android:id="@+id/button_close"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="16dp"
+            android:scaleType="centerInside"
+            android:background="@drawable/round_button"
+            android:src="@drawable/ic_close_black_24dp"/>
 
     </LinearLayout>
 

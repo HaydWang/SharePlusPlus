@@ -9,14 +9,15 @@ android {
             storePassword 'serialsoft'
         }
     }
-    compileSdkVersion 24
+
+    compileSdkVersion 25
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.droidrise.snaptext"
-        minSdkVersion 16
+        minSdkVersion 14
         targetSdkVersion 23
-        versionCode 101000
-        versionName "1.01.000"
+        versionCode 101002
+        versionName "1.01.002"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }
@@ -38,7 +39,11 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:design:24.2.1'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:design:25.0.0'
+    compile 'joda-time:joda-time:2.3'
     testCompile 'junit:junit:4.12'
+
+    //font
+    compile 'uk.co.chrisjenx:calligraphy:2.2.0'
 }
