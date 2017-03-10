@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">字画</string>
-    <string name="sent_via_sanptext">字画</string>
+    <string name="sent_via_sanptext">发送自 字画</string>
     <string name="action_settings">设置</string>
 
     <string name="wechat_friend">微信</string>
@@ -27,4 +27,5 @@
     <string name="email_subject">[SnapText] - Feedback</string>
     <string name="no_email_client">未安装电子邮件应用,无法发送邮件。</string>
     <string name="enable_usage_access_alert">请在接下来的设置页面中选择 \"字画\" , 并开启 \"允许访问使用记录\" 。</string>
+    <string name="date_format_title">MMM.d yyyy</string>
 </resources>

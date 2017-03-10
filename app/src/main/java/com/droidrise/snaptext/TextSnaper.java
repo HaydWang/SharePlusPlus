@@ -9,10 +9,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -45,6 +43,15 @@ class TextSnaper {
     private Typeface mFontContent;
     private WindowManager.LayoutParams mLayoutParams;
     private View topView;
+
+    TextSnaper(Context context) {
+        mContext = context;
+
+        //mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/fz_lvjiande_jian.otf");
+        //mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/fz_songkebenxiukai_jian.ttf");
+        mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/fz_suxinshiliukai_jian.ttf");
+        mFontTitle = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/traditional.otf");
+    }
 
     private ImageButton.OnClickListener ImageButtonClickListener =
             new ImageButton.OnClickListener() {
@@ -136,13 +143,6 @@ class TextSnaper {
         }
     }
 
-    TextSnaper(Context context) {
-        mContext = context;
-
-        mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/FZSongKeBenXiuKaiS-R-GB.otf");
-        mFontTitle = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/Traditional.otf");
-    }
-
     void showContent(String content, String source) {
         if (topView != null) {
             dismissTopView();
@@ -165,10 +165,19 @@ class TextSnaper {
         tv.setTypeface(mFontTitle);
         if (source != null) {
             tv.setText(mContext.getString(R.string.snap_from) + " " + source);
+
+            tv = (TextView) topView.findViewById(R.id.text_second_title);
+            if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
+                tv.setTypeface(mFontTitle);
+                tv.setText(CNDateUtility.getFullCNDate());
+                tv.setVisibility(View.VISIBLE);
+            } else {
+                tv.setVisibility(View.GONE);
+            }
         } else {
             // Show time stamp as title
             if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
-                tv.setText(CNDateUtility.getFullCNDate());
+                tv.setText(CNDateUtility.getFullCNDate() + " 记");
             } else {
                 tv.setText(new SimpleDateFormat(mContext.getString(R.string.date_format)).format(new java.util.Date()));
             }
