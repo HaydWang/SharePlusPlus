@@ -16,8 +16,8 @@ android {
         applicationId "com.droidrise.snaptext"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 101001
-        versionName "1.01.001"
+        versionCode 101002
+        versionName "1.01.002"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }

@@ -158,7 +158,9 @@ class TextSnaper {
         });
 
         TextView tv = (TextView) topView.findViewById(R.id.text_content);
-        tv.setTypeface(mFontContent);
+        if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
+            tv.setTypeface(mFontContent);
+        }
         tv.setText(content);
 
         tv = (TextView) topView.findViewById(R.id.text_data_source);
@@ -170,9 +172,8 @@ class TextSnaper {
             if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
                 tv.setTypeface(mFontTitle);
                 tv.setText(CNDateUtility.getFullCNDate());
-                tv.setVisibility(View.VISIBLE);
             } else {
-                tv.setVisibility(View.GONE);
+                tv.setText(new SimpleDateFormat(mContext.getString(R.string.date_format_title)).format(new java.util.Date()));
             }
         } else {
             // Show time stamp as title

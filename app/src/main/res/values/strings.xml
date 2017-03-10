@@ -11,7 +11,7 @@
     <string name="cancel">Cancel</string>
 
     <string name="date_format_title">MMM.d yyyy</string>
-    <string name="date_format">M/d/yyyy K:mm a</string>
+    <string name="date_format">M/d/yyyy H:mm</string>
     <string name="snap_from">From</string>
 
     <string name="failed_share_snap">Failed to share snap.</string>
