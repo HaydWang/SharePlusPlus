@@ -159,7 +159,12 @@ class TextSnaper {
 
         TextView tv = (TextView) topView.findViewById(R.id.text_content);
         if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
-            tv.setTypeface(mFontContent);
+            if (Locale.getDefault().getCountry().equals(new Locale("zh","TW").getCountry())) {
+                // Set content to traditional for TaiWan
+                tv.setTypeface(mFontTitle);
+            } else {
+                tv.setTypeface(mFontContent);
+            }
         }
         tv.setText(content);
 

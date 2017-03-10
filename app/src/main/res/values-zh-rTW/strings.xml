@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">字畫</string>
+    <string name="sent_via_sanptext">發送自 字畫</string>
+    <string name="action_settings">設置</string>
+
+    <string name="wechat_friend">微信</string>
+    <string name="wechat_moment">朋友圈</string>
+    <string name="share">分享...</string>
+    <string name="save">保存</string>
+    <string name="saved">摘錄已保存至照片庫中。</string>
+    <string name="cancel">取消</string>
+
+    <string name="date_format">yyyy.M.d H:mm</string>
+    <string name="snap_from">摘錄自</string>
+    <string name="failed_share_snap">分享出錯了。</string>
+    <string name="pref_app_info">字畫(SnapText) 將您在任何應用中復制的文字內容轉換為壹張圖片, 並保存或者共享給朋友們。</string>
+    <string name="pref_app_usage_summary">允許字畫查看應用使用情況, 以便於獲取文字的來源信息。</string>
+    <string name="pref_other_settings_title">其他</string>
+    <string name="pref_service_settings_title">服務設置</string>
+    <string name="pref_snaptext_summary">啟動字畫服務,以自動轉換復制的文字信息。</string>
+    <string name="pref_snaptext_title">運行</string>
+    <string name="pref_app_usage_title">獲取文字來源</string>
+    <string name="version">版本</string>
+    <string name="feedback_email">反饋問題</string>
+    <string name="email_sending">發送電子郵件...</string>
+    <string name="email_subject">[SnapText] - Feedback</string>
+    <string name="no_email_client">未安裝電子郵件應用,無法發送郵件。</string>
+    <string name="enable_usage_access_alert">請在接下來的設置頁面中選擇 \"字畫\" , 並開啟 \"允許訪問使用記錄\" 。</string>
+    <string name="date_format_title">MMM.d yyyy</string>
+</resources>
