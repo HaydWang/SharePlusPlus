@@ -48,6 +48,23 @@
                         android:textColor="@color/colorSnapTitle" />
 
                 <!-- Text content -->
+                <!--<com.bluejamesbond.text.DocumentView-->
+                    <!--xmlns:ext="http://schemas.android.com/apk/res-auto"-->
+                    <!--android:id="@+id/text_content"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--ext:documentView_textSize="20sp"-->
+                    <!--ext:documentView_antialias="true"-->
+                    <!--ext:documentView_cacheConfig="auto_quality"-->
+                    <!--ext:documentView_hyphen="-"-->
+                    <!--ext:documentView_lineHeightMultiplier="2.0"-->
+                    <!--ext:documentView_reverse="false"-->
+                    <!--ext:documentView_textAlignment="justified"-->
+                    <!--ext:documentView_textColor="@color/colorSnapText"-->
+                    <!--ext:documentView_textFormat="plain"-->
+                    <!--ext:documentView_textSubPixel="false"-->
+                    <!--ext:documentView_textTypefacePath="fonts/fz_suxinshiliukai_jian.ttf" />-->
+
                 <com.droidrise.snaptext.JustifyTextView
                         android:id="@+id/text_content"
                         android:layout_width="wrap_content"

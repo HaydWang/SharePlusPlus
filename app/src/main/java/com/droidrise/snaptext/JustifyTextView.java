@@ -36,8 +36,7 @@ public class JustifyTextView extends TextView {
         paint.drawableState = getDrawableState();
         mViewWidth = getMeasuredWidth();
         String text = getText().toString();
-        mLineY = 0;
-        mLineY += getTextSize();
+        mLineY = (int)getTextSize();
         Layout layout = getLayout();
 
         if (layout == null) {
