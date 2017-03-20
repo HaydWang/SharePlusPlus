@@ -157,18 +157,17 @@ class TextSnaper {
             }
         });
 
-        TextView tv = (TextView) topView.findViewById(R.id.text_content);
-        if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
-            if (Locale.getDefault().getCountry().equals(new Locale("zh","TW").getCountry())) {
-                // Set content to traditional for TaiWan
-                tv.setTypeface(mFontTitle);
-            } else {
-                tv.setTypeface(mFontContent);
-            }
+        TextView  contentView = (TextView) topView.findViewById(R.id.text_content);
+        if (Locale.getDefault().getCountry().equals(new Locale("zh","TW").getCountry())
+                || Locale.getDefault().getCountry().equals(new Locale("zh","HK").getCountry())) {
+            // Set content to traditional for TaiWan & HongKong
+            contentView.setTypeface(mFontTitle);
+        } else {
+            contentView.setTypeface(mFontContent);
         }
-        tv.setText(content);
+        contentView.setText(content);
 
-        tv = (TextView) topView.findViewById(R.id.text_data_source);
+        TextView tv = (TextView) topView.findViewById(R.id.text_data_source);
         tv.setTypeface(mFontTitle);
         if (source != null) {
             tv.setText(mContext.getString(R.string.snap_from) + " " + source);

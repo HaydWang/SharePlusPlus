@@ -81,13 +81,13 @@ public class ClipboardService extends Service {
                         if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
                             CharSequence sequence = item.getText();
                             if (sequence != null) {
-                                String text = sequence.toString();
+                                String text = sequence.toString() + "\r\n";
                                 mTextSnaper.showContent(text, source);
                             }
                         } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_HTML)) {
                             CharSequence sequence = item.coerceToText(this);
                             if (sequence != null) {
-                                String text = sequence.toString();
+                                String text = sequence.toString() + "\r\n";
                                 mTextSnaper.showContent(text, source);
                             }
                         } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_INTENT)) {
