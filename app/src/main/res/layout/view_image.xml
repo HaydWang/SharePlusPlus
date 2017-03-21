@@ -13,13 +13,16 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="48dp"
         android:layout_gravity="center_horizontal"
-        android:scrollbars="none">
+        android:fadeScrollbars="false">
 
         <!-- Snap content view -->
         <LinearLayout
+                android:id="@+id/layout_root"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:background="@color/colorSnapBackground">
 
             <LinearLayout
@@ -30,12 +33,17 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp">
 
+
+
                 <!-- Title -->
-                <TextView
+                <com.droidrise.snaptext.OneKeyClearEditText
                     android:id="@+id/text_data_source"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone|flagNoExtractUi"
                     android:textStyle="bold"
                     android:textColor="@color/colorSnapTitle" />
 

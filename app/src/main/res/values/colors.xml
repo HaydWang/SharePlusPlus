@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#4CAF50</color>
-    <color name="colorPrimaryDark">#2E7D32</color>
-    <color name="colorAccent">#FFECB3</color>
-
-    <color name="colorSnapTitle">#845007</color>
-
-    <color name="colorSnapBackground">#F0F0F4</color>
-
-    <color name="colorSnapText">#062925</color>
+    <color name="colorPrimary">#8E8E90</color>
+    <color name="colorPrimaryDark">#474747</color>
+    <color name="colorAccent">#D1603D</color>
 
     <color name="colorBottomButtonBackground">#FFFFFF</color>
+    <color name="colorSnapBackground">#F0F0F4</color>
+    <color name="colorSnapTitle">#845007</color>
+    <color name="colorSnapText">#062925</color>
+    <color name="colorSignature">#4a4a4a</color>
 
-    <color name="colorBottomBarBackground">#333030</color>
+    <color name="colorBottomBarBackground">@color/colorPrimaryDark</color>
     <color name="colorBottomButtonStroke">@color/colorBottomBarBackground</color>
 
-    <color name="colorSingatureBackground">#A3A1A1</color>
+    <color name="colorSingatureBackground">@color/colorPrimary</color>
     <color name="colorBottomButtonPressed">@color/colorSingatureBackground</color>
-
-    <color name="colorSignature">#4a4a4a</color>
 
     <color name="main_background">#FEFEFE</color>
 </resources>

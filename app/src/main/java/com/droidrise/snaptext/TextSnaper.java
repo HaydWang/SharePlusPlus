@@ -12,12 +12,12 @@ import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageButton;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,6 +43,7 @@ class TextSnaper {
     private Typeface mFontContent;
     private WindowManager.LayoutParams mLayoutParams;
     private View topView;
+    private String title;
 
     TextSnaper(Context context) {
         mContext = context;
@@ -143,7 +144,7 @@ class TextSnaper {
         }
     }
 
-    void showContent(String content, String source) {
+    void showContent(final String content, final String source) {
         if (topView != null) {
             dismissTopView();
         }
@@ -167,28 +168,75 @@ class TextSnaper {
         }
         contentView.setText(content);
 
-        TextView tv = (TextView) topView.findViewById(R.id.text_data_source);
-        tv.setTypeface(mFontTitle);
-        if (source != null) {
-            tv.setText(mContext.getString(R.string.snap_from) + " " + source);
+        String subTitle = "";
+        title = new SimpleDateFormat(mContext.getString(R.string.date_format)).format(new java.util.Date());
+        if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
+            title = CNDateUtility.getFullCNDate() + " 记";
 
-            tv = (TextView) topView.findViewById(R.id.text_second_title);
-            if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
-                tv.setTypeface(mFontTitle);
-                tv.setText(CNDateUtility.getFullCNDate());
-            } else {
-                tv.setText(new SimpleDateFormat(mContext.getString(R.string.date_format_title)).format(new java.util.Date()));
-            }
-        } else {
-            // Show time stamp as title
-            if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
-                tv.setText(CNDateUtility.getFullCNDate() + " 记");
-            } else {
-                tv.setText(new SimpleDateFormat(mContext.getString(R.string.date_format)).format(new java.util.Date()));
+            if (source != null) {
+                subTitle = CNDateUtility.getFullCNDate();
             }
         }
+        if (source != null) {
+            title = mContext.getString(R.string.snap_from) + " " + source;
+            subTitle = new SimpleDateFormat(mContext.getString(R.string.date_format_title)).format(new java.util.Date());
+        }
 
-        tv = (TextView) topView.findViewById(R.id.text_timestamp);
+        TextView secondTitle = (TextView) topView.findViewById(R.id.text_second_title);
+        secondTitle.setTypeface(mFontTitle);
+
+        OneKeyClearEditText editText = (OneKeyClearEditText) topView.findViewById(R.id.text_data_source);
+        editText.setTypeface(mFontTitle);
+
+        secondTitle.setText(subTitle);
+        editText.setHint(title);
+        editText.setText(title);
+        editText.setOnFocusChangeListener(new android.view.View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                OneKeyClearEditText editText = (OneKeyClearEditText) topView.findViewById(R.id.text_data_source);
+                if (hasFocus) {
+                    title = editText.getText().toString();
+
+                    if (source == null) {
+                        TextView tv = (TextView) topView.findViewById(R.id.text_second_title);
+                        if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
+                            tv.setTypeface(mFontTitle);
+                            tv.setText(CNDateUtility.getFullCNDate());
+                        } else {
+                            tv.setText(new SimpleDateFormat(mContext.getString(R.string.date_format_title)).format(new java.util.Date()));
+                        }
+                    }
+                } else {
+                    if (editText.getText().equals(editText.getHint())) {
+                        TextView tv = (TextView) topView.findViewById(R.id.text_second_title);
+                        tv.setText("");
+                    }
+                }
+                editText.onFocusChange(v, hasFocus);
+            }
+        });
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId== EditorInfo.IME_ACTION_DONE){
+                    if(v.getText().toString().isEmpty()) {
+                        v.setText(v.getHint());
+                    }
+                    v.clearFocus();
+                }
+                return false;
+            }
+        });
+        editText.setOnClearClickedListener(new OneKeyClearEditText.OnClearClickedListener() {
+            @Override
+            public void onClearClicked(TextView v) {
+                v.setText(title);
+                v.clearFocus();
+            }
+        });
+
+        TextView tv = (TextView) topView.findViewById(R.id.text_timestamp);
         tv.setTypeface(mFontTitle);
         tv.setText(new SimpleDateFormat(mContext.getString(R.string.date_format)).format(new java.util.Date()));
 
