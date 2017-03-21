@@ -3,20 +3,22 @@ package com.droidrise.snaptext;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 
 import java.io.File;
@@ -24,11 +26,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import static android.support.v4.content.FileProvider.getUriForFile;
 
 import uk.co.chrisjenx.calligraphy.TypefaceUtils;
+import com.github.jorgecastilloprz.FABProgressCircle;
 
 /**
  * Created by a22460 on 16/9/14.
@@ -43,15 +47,24 @@ class TextSnaper {
     private Typeface mFontContent;
     private WindowManager.LayoutParams mLayoutParams;
     private View topView;
+
     private String title;
+    static private SharedPreferences prefs;
+    private WindowManager windowManager;
+    private int bubbleX, bubbleY;
+
+    static private HashMap<Long, SnapData> snaplist = new HashMap<>();
 
     TextSnaper(Context context) {
         mContext = context;
-
         //mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/fz_lvjiande_jian.otf");
         //mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/fz_songkebenxiukai_jian.ttf");
         mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/fz_suxinshiliukai_jian.ttf");
         mFontTitle = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/traditional.otf");
+
+        prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        bubbleX = prefs.getInt("bubble_x", 0);
+        bubbleY = prefs.getInt("bubble_y", 240);
     }
 
     private ImageButton.OnClickListener ImageButtonClickListener =
@@ -144,7 +157,109 @@ class TextSnaper {
         }
     }
 
-    void showContent(final String content, final String source) {
+    protected void showContent(final String content, final String source) {
+        SnapData snapData = new SnapData(content, source);
+        // TODO: find dup
+        snaplist.put(snapData.getId(), snapData);
+        //showTextView(snapData);
+        showSnapBubble(snapData);
+    }
+
+    protected void showSnapBubble(final SnapData snapData) {
+        windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        if (topView != null) {
+            //dismissTopView();
+        } else {
+            topView = View.inflate(mContext, R.layout.view_snap_bubble, null);
+
+            final View btnBubble = topView.findViewById(R.id.button_snap_bubble);
+            btnBubble.setOnTouchListener(new View.OnTouchListener() {
+                boolean moved = false;
+                int lastY, paramY;
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            btnBubble.setPressed(true);
+                            moved = false;
+                            lastY = (int) event.getRawY();
+                            paramY = mLayoutParams.y;
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            moved = true;
+                            int dy = (int) event.getRawY() - lastY;
+                            mLayoutParams.y = paramY + dy;
+                            windowManager.updateViewLayout(topView, mLayoutParams);
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            btnBubble.setPressed(false);
+                            if (moved) {
+                                bubbleY = paramY + (int) event.getRawY() - lastY;
+                                prefs.edit().putInt("bubble_y", bubbleY).apply();
+                            } else {
+                                Intent intent = new Intent(mContext, SnapTextActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.putExtra(SnapData.ID, snapData.getId());
+                                mContext.startActivity(intent);
+                            }
+                            break;
+                    }
+                    return true;
+                }
+            });
+
+            DisplayMetrics metrics = new DisplayMetrics();
+            windowManager.getDefaultDisplay().getMetrics(metrics);
+            int w = (int) (58.0f * metrics.scaledDensity); //WindowManager.LayoutParams.WRAP_CONTENT;
+            int h = (int) (72.0f * metrics.scaledDensity); //WindowManager.LayoutParams.WRAP_CONTENT;
+            // Do not get back key event
+            int flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                    | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
+            int type = WindowManager.LayoutParams.TYPE_TOAST;
+            mLayoutParams =
+                    new WindowManager.LayoutParams(w, h, type, flags, PixelFormat.TRANSPARENT);
+            mLayoutParams.gravity = Gravity.RIGHT | Gravity.TOP;
+            mLayoutParams.x = bubbleX;
+            mLayoutParams.y = bubbleY;
+            mLayoutParams.alpha = 0.9f;
+
+            windowManager.addView(topView, mLayoutParams);
+        }
+
+        topView.post(new Runnable() {
+            @Override
+            public void run() {
+                updateSnapBubble(topView, snapData);
+            }
+        });
+    }
+
+    protected void updateSnapBubble(View view, SnapData snapData) {
+        final FABProgressCircle progressCircle = (FABProgressCircle)view.findViewById(R.id.fabProgressCircle);
+        // TODO: need fix in the lib
+        progressCircle.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                ImageView imgView = (ImageView) v.findViewById(R.id.completeFabIcon);
+                if ((imgView != null) && (imgView.getScaleType() != ImageView.ScaleType.CENTER_INSIDE)) {
+                    imgView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                }
+            }
+        });
+        progressCircle.show();
+
+        // TODO: generate snap
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progressCircle.beginFinalAnimation();
+            }
+        }, 320);
+    }
+
+    protected void showSnapTextView(final String content, final String source) {
         if (topView != null) {
             dismissTopView();
         }
@@ -197,7 +312,6 @@ class TextSnaper {
                 OneKeyClearEditText editText = (OneKeyClearEditText) topView.findViewById(R.id.text_data_source);
                 if (hasFocus) {
                     title = editText.getText().toString();
-
                     if (source == null) {
                         TextView tv = (TextView) topView.findViewById(R.id.text_second_title);
                         if (Locale.getDefault().getLanguage().equals(new Locale("zh").getLanguage())) {
@@ -276,29 +390,24 @@ class TextSnaper {
 
         int w = WindowManager.LayoutParams.WRAP_CONTENT;
         int h = WindowManager.LayoutParams.WRAP_CONTENT;
-
         int flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
         int type = WindowManager.LayoutParams.TYPE_TOAST;
-
         mLayoutParams =
                 new WindowManager.LayoutParams(w, h, type, flags, PixelFormat.TRANSPARENT);
         mLayoutParams.gravity = Gravity.TOP;
 
-        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        wm.addView(topView, mLayoutParams);
-
+        windowManager.addView(topView, mLayoutParams);
         topView.post(new Runnable() {
             @Override
             public void run() {
-                updateFrameLayout(topView);
+                updateSnapTextView(topView);
             }
         });
     }
 
-    private void updateFrameLayout(View view) {
-        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+    private void updateSnapTextView(View view) {
         DisplayMetrics metrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(metrics);
+        windowManager.getDefaultDisplay().getMetrics(metrics);
 
         int target = (int) (metrics.heightPixels * 1);
         if (view.getHeight() > target) {
@@ -306,7 +415,7 @@ class TextSnaper {
         }
         mLayoutParams.width = metrics.widthPixels;
 
-        wm.updateViewLayout(view, mLayoutParams);
+        windowManager.updateViewLayout(view, mLayoutParams);
     }
 
     private void dismissTopView() {
@@ -455,5 +564,9 @@ class TextSnaper {
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    public static SnapData getSnapData(long id) {
+        return snaplist.get(id);
     }
 }
