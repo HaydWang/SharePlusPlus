@@ -143,7 +143,44 @@ class TextSnaper {
         }
     }
 
-    void showContent(String content, String source) {
+    protected void showContent(String content, String source) {
+        //showTextView(content, source);
+        showSnapBubble();
+    }
+
+    protected void showSnapBubble() {
+        if (topView != null) {
+            dismissTopView();
+        }
+        topView = View.inflate(mContext, R.layout.view_snap_bubble, null);
+
+        ImageButton btnBubble = (ImageButton) topView.findViewById(R.id.button_snap_bubble);
+        btnBubble.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismissTopView();
+            }
+        });
+
+        int w = WindowManager.LayoutParams.WRAP_CONTENT;
+        int h = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        int flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
+        int type = WindowManager.LayoutParams.TYPE_TOAST;
+
+        mLayoutParams =
+                new WindowManager.LayoutParams(w, h, type, flags, PixelFormat.TRANSPARENT);
+        mLayoutParams.gravity = Gravity.TOP;
+
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics metrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(metrics);
+        mLayoutParams.x = metrics.widthPixels;
+        mLayoutParams.y = 200;
+        wm.addView(topView, mLayoutParams);
+    }
+
+    protected void showTextView(String content, String source) {
         if (topView != null) {
             dismissTopView();
         }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:theme="@style/AppTheme.NoActionBar">
+
+    <ImageButton
+        android:id="@+id/button_snap_bubble"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:scaleType="centerInside"
+        android:background="@drawable/round_button"
+        android:src="@drawable/ic_wechat_friends_24dp"/>
+
+</FrameLayout>
