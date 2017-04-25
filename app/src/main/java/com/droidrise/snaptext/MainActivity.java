@@ -1,6 +1,8 @@
 package com.droidrise.snaptext;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import com.droidrise.snaptext.clipboard.ClipboardService;
 import com.droidrise.snaptext.model.ClipsRecyclerViewAdapter;
 
 /**
@@ -50,6 +54,12 @@ public class MainActivity extends AppCompatActivity {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                 new RecyclerItemTouchHelperCallback(mRecyclerView.getAdapter()));
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
+
+        SharedPreferences prefs = getSharedPreferences(
+                SettingsActivity.PRES_NAME, Context.MODE_PRIVATE);
+        if (prefs.getBoolean(SettingsActivity.PREFS_SERVICE, true)) {
+            startService(new Intent(this, ClipboardService.class));
+        }
     }
 
     @Override

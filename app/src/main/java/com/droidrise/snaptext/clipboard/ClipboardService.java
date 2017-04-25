@@ -73,31 +73,32 @@ public class ClipboardService extends Service {
     private void performClipboardCheck() {
         if (mClipboardManager.hasPrimaryClip()) {
             ClipData data = mClipboardManager.getPrimaryClip();
-            if (data != null) {
-                ClipDescription description = data.getDescription();
-                if (description != null) {
-                    ClipData.Item item = data.getItemAt(0);
-                    if (item != null) {
-                        String source = getForgroundActivity();
-                        if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-                            CharSequence sequence = item.getText();
-                            if (sequence != null) {
-                                String text = sequence.toString() + "\r\n";
-                                mTextSnaper.showContent(text, source);
-                            }
-                        } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_HTML)) {
-                            CharSequence sequence = item.coerceToText(this);
-                            if (sequence != null) {
-                                String text = sequence.toString() + "\r\n";
-                                mTextSnaper.showContent(text, source);
-                            }
-                        } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_INTENT)) {
-                            // TODO: handle intent
-                        } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_URILIST)) {
-                            // TODO: handle uri
-                        }
-                    }
+            if (data == null) return;
+
+            ClipDescription description = data.getDescription();
+            if (description == null) return;
+
+            ClipData.Item item = data.getItemAt(0);
+            if (item == null) return;
+
+            String source = getForgroundActivity();
+            if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                // TODO: check dup
+                CharSequence sequence = item.getText();
+                if (sequence != null) {
+                    String text = sequence.toString() + "\r\n";
+                    mTextSnaper.showContent(text, source);
                 }
+            } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_HTML)) {
+                CharSequence sequence = item.coerceToText(this);
+                if (sequence != null) {
+                    String text = sequence.toString() + "\r\n";
+                    mTextSnaper.showContent(text, source);
+                }
+            } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_INTENT)) {
+                // TODO: handle intent
+            } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_URILIST)) {
+                // TODO: handle uri
             }
         }
     }

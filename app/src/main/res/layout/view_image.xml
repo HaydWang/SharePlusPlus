@@ -65,7 +65,7 @@
                     <!--ext:documentView_textSubPixel="false"-->
                     <!--ext:documentView_textTypefacePath="fonts/fz_suxinshiliukai_jian.ttf" />-->
 
-                <com.droidrise.snaptext.JustifyTextView
+                <com.droidrise.snaptext.utils.JustifyTextView
                         android:id="@+id/text_content"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

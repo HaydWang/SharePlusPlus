@@ -51,8 +51,10 @@ class TextSnaper {
 
         //mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/fz_lvjiande_jian.otf");
         //mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/fz_songkebenxiukai_jian.ttf");
-        mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/fz_suxinshiliukai_jian.ttf");
-        mFontTitle = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/traditional.otf");
+        mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(),
+                "fonts/fz_suxinshiliukai_jian.ttf");
+        mFontTitle = TypefaceUtils.load(mContext.getResources().getAssets(),
+                "fonts/traditional.otf");
     }
 
     private ImageButton.OnClickListener ImageButtonClickListener =
