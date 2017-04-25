@@ -1,4 +1,4 @@
-package com.droidrise.snaptext;
+package com.droidrise.snaptext.utils;
 
 /**
  * Created by a22460 on 16/9/17.

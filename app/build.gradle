@@ -3,21 +3,21 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
-            keyAlias 'snaptext'
-            keyPassword '780215'
-            storeFile file('/Users/a22460/Documents/GoogleDrive-Leon3000/DroidRise/keystore')
-            storePassword 'serialsoft'
+            storeFile file(STORE_FILE)
+            storePassword STORE_PASSWORD
+            keyAlias KEY_ALIAS
+            keyPassword KEY_PASSWORD
         }
     }
 
     compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "com.droidrise.snaptext"
         minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 101003
-        versionName "1.01.003"
+        targetSdkVersion 25
+        versionCode 102000
+        versionName "1.02.000"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }
@@ -26,7 +26,8 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -39,11 +40,16 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:design:25.0.0'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
     compile 'joda-time:joda-time:2.3'
     testCompile 'junit:junit:4.12'
 
     //font
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
+
+    //butter knife
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }

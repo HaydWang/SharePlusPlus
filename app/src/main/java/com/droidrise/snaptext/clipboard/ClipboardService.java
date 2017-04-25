@@ -1,4 +1,4 @@
-package com.droidrise.snaptext;
+package com.droidrise.snaptext.clipboard;
 
 import android.app.ActivityManager;
 import android.app.Service;
@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import com.droidrise.snaptext.SettingsActivity;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -47,8 +48,8 @@ public class ClipboardService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         SharedPreferences prefs = this.getSharedPreferences(
-                MainActivity.PRES_NAME, Context.MODE_PRIVATE);
-        prefs.edit().putBoolean(MainActivity.PREFS_SERVICE, true).apply();
+                SettingsActivity.PRES_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putBoolean(SettingsActivity.PREFS_SERVICE, true).apply();
 
         return START_STICKY;
     }
@@ -104,8 +105,8 @@ public class ClipboardService extends Service {
     // TODO need test API20
     protected String getForgroundActivity() {
         SharedPreferences prefs = getSharedPreferences(
-                MainActivity.PRES_NAME, Context.MODE_PRIVATE);
-        if (prefs.getBoolean(MainActivity.PREFS_COPY_SOURCE, true)) {
+                SettingsActivity.PRES_NAME, Context.MODE_PRIVATE);
+        if (prefs.getBoolean(SettingsActivity.PREFS_COPY_SOURCE, true)) {
             if (Build.VERSION.SDK_INT < 21) {
                 return getAppLable(getPreLollipop());
             } else {

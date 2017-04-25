@@ -1,4 +1,4 @@
-package com.droidrise.snaptext;
+package com.droidrise.snaptext.utils;
 
 import org.joda.time.DateTime;
 import java.util.HashMap;

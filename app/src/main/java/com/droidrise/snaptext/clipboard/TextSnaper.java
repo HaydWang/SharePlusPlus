@@ -1,4 +1,4 @@
-package com.droidrise.snaptext;
+package com.droidrise.snaptext.clipboard;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -28,6 +28,8 @@ import java.util.Locale;
 
 import static android.support.v4.content.FileProvider.getUriForFile;
 
+import com.droidrise.snaptext.utils.CNDateUtility;
+import com.droidrise.snaptext.R;
 import uk.co.chrisjenx.calligraphy.TypefaceUtils;
 
 /**
