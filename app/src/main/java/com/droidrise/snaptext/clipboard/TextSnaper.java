@@ -36,7 +36,7 @@ import uk.co.chrisjenx.calligraphy.TypefaceUtils;
  * Created by a22460 on 16/9/14.
  */
 
-class TextSnaper {
+public class TextSnaper {
     private final static String IMAGE_FOLDER = ".snaptext";
     private final static String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
@@ -46,7 +46,7 @@ class TextSnaper {
     private WindowManager.LayoutParams mLayoutParams;
     private View topView;
 
-    TextSnaper(Context context) {
+    public TextSnaper(Context context) {
         mContext = context;
 
         //mFontContent = TypefaceUtils.load(mContext.getResources().getAssets(), "fonts/fz_lvjiande_jian.otf");
@@ -147,7 +147,7 @@ class TextSnaper {
         }
     }
 
-    void showContent(String content, String source) {
+    public void showContent(String content, String source) {
         if (topView != null) {
             dismissTopView();
         }

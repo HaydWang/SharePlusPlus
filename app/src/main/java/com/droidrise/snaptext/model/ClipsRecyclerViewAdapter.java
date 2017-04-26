@@ -18,11 +18,20 @@ import java.util.List;
  * Created by Hai on 4/24/17.
  */
 public class ClipsRecyclerViewAdapter extends RecyclerView.Adapter<ClipsViewHolder>
-        implements RecyclerItemTouchHelperCallback.ItemTouchHelperAdapter {
+        implements RecyclerItemTouchHelperCallback.ItemTouchHelperAdapter, View.OnClickListener {
     private final LayoutInflater mLayoutInflater;
     private final Context mContext;
 
     private List<ClipItem> mData = null;
+
+    private OnRecyclerViewItemClickListener mOnItemClickListener = null;
+    public static interface OnRecyclerViewItemClickListener {
+        void onItemClick(View view , int position);
+    }
+
+    public void setOnItemClickListener(OnRecyclerViewItemClickListener listener) {
+        this.mOnItemClickListener = listener;
+    }
 
     public static class SpaceItemDecoration extends RecyclerView.ItemDecoration {
         private int space;
@@ -49,11 +58,21 @@ public class ClipsRecyclerViewAdapter extends RecyclerView.Adapter<ClipsViewHold
 
     @Override
     public ClipsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ClipsViewHolder(mLayoutInflater.inflate(R.layout.clips_recyclerview_item, parent, false));
+        View view = mLayoutInflater.inflate(R.layout.clips_recyclerview_item, parent, false);
+        view.setOnClickListener(this);
+        return new ClipsViewHolder(view);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (mOnItemClickListener != null) {
+            mOnItemClickListener.onItemClick(v,(int)v.getTag());
+        }
     }
 
     @Override
     public void onBindViewHolder(ClipsViewHolder holder, int position) {
+        holder.itemView.setTag(position);
         holder.onBindViewHolder(position, mData.get(position));
     }
 

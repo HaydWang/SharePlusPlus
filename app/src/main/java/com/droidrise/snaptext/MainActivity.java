@@ -13,10 +13,13 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import com.droidrise.snaptext.clipboard.ClipboardService;
+import com.droidrise.snaptext.clipboard.TextSnaper;
+import com.droidrise.snaptext.model.ClipItem;
 import com.droidrise.snaptext.model.ClipsRecyclerViewAdapter;
 
 /**
@@ -56,6 +59,16 @@ public class MainActivity extends AppCompatActivity {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                 new RecyclerItemTouchHelperCallback(mRecyclerView.getAdapter()));
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
+
+        // Click event
+        adapter.setOnItemClickListener(new ClipsRecyclerViewAdapter.OnRecyclerViewItemClickListener(){
+            @Override
+            public void onItemClick(View view, int position) {
+                ClipItem clip = ClipboardService.mData.get(position);
+                TextSnaper snaper = new TextSnaper(view.getContext());
+                snaper.showContent(clip.getClip(), clip.getSource());
+            }
+        });
     }
 
     @Override

@@ -54,8 +54,6 @@ public class ClipboardService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        //mTextSnaper = new TextSnaper(this);
-
         // Initialize Realm
         Realm.init(this);
 
@@ -195,7 +193,6 @@ public class ClipboardService extends Service {
     }
 
     private void addClip(final Context context, final String text, final String source) {
-        //mTextSnaper.showContent(text, source);
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
