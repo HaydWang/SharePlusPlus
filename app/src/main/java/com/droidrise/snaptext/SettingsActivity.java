@@ -164,12 +164,6 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        SharedPreferences prefs = this.getSharedPreferences(
-                PRES_NAME, Context.MODE_PRIVATE);
-        if (prefs.getBoolean(PREFS_SERVICE, true)) {
-            startService(new Intent(this, ClipboardService.class));
-        }
-
         ArrayList<String> permissions = new ArrayList<>();
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE)

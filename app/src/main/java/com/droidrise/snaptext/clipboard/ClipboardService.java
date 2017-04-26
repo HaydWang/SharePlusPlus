@@ -15,10 +15,19 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.provider.SyncStateContract;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
+import com.droidrise.snaptext.MainActivity;
 import com.droidrise.snaptext.SettingsActivity;
+import com.droidrise.snaptext.SnapTextApplication;
+import com.droidrise.snaptext.model.ClipItem;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -28,6 +37,9 @@ import java.util.TreeMap;
  */
 
 public class ClipboardService extends Service {
+    public static List<ClipItem> mData = new ArrayList<>();
+    private Realm realm;
+
     private ClipboardManager mClipboardManager;
     private TextSnaper mTextSnaper;
 
@@ -40,7 +52,25 @@ public class ClipboardService extends Service {
 
     @Override
     public void onCreate() {
-        mTextSnaper = new TextSnaper(this);
+        super.onCreate();
+
+        //mTextSnaper = new TextSnaper(this);
+
+        // Initialize Realm
+        Realm.init(this);
+
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                .name("clips.realm")
+                .schemaVersion(1)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        realm = Realm.getInstance(config);
+
+        RealmResults<ClipItem> clipItems = realm.where(ClipItem.class).findAll();
+        mData.addAll(realm.copyFromRealm(clipItems));
+        Log.d("f10210c", "mData loaded: " + mData.size());
+
+
         mClipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
         mClipboardManager.addPrimaryClipChangedListener(mClipChangedListener);
     }
@@ -61,6 +91,11 @@ public class ClipboardService extends Service {
         if (mClipboardManager != null) {
             mClipboardManager.removePrimaryClipChangedListener(mClipChangedListener);
             mClipboardManager = null;
+        }
+
+        if (realm != null) {
+            realm.close();
+            realm = null;
         }
     }
 
@@ -87,13 +122,13 @@ public class ClipboardService extends Service {
                 CharSequence sequence = item.getText();
                 if (sequence != null) {
                     String text = sequence.toString() + "\r\n";
-                    mTextSnaper.showContent(text, source);
+                    addClip(this, text, source);
                 }
             } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_HTML)) {
                 CharSequence sequence = item.coerceToText(this);
                 if (sequence != null) {
                     String text = sequence.toString() + "\r\n";
-                    mTextSnaper.showContent(text, source);
+                    addClip(this, text, source);
                 }
             } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_INTENT)) {
                 // TODO: handle intent
@@ -157,5 +192,24 @@ public class ClipboardService extends Service {
         } catch (PackageManager.NameNotFoundException e) {
         }
         return null;
+    }
+
+    private void addClip(final Context context, final String text, final String source) {
+        //mTextSnaper.showContent(text, source);
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ClipItem clip = realm.createObject(ClipItem.class);
+                clip.setClip(text);
+                clip.setSource(source);
+                clip.setDate(System.currentTimeMillis());
+
+                mData.add(0, clip);
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("notify_item_inserted", 0);
+                context.startActivity(intent);
+            }
+        });
     }
 }

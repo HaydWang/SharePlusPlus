@@ -44,8 +44,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, OrientationHelper.VERTICAL));
-        mRecyclerView.setAdapter(new ClipsRecyclerViewAdapter(this));
+        ClipsRecyclerViewAdapter adapter = new ClipsRecyclerViewAdapter(this);
+        adapter.setData(ClipboardService.mData);
+        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, OrientationHelper.VERTICAL));
+        mRecyclerView.setAdapter(adapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         //TODO: Set diver to 6px, need move to dimen
@@ -54,11 +56,17 @@ public class MainActivity extends AppCompatActivity {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                 new RecyclerItemTouchHelperCallback(mRecyclerView.getAdapter()));
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
+    }
 
-        SharedPreferences prefs = getSharedPreferences(
-                SettingsActivity.PRES_NAME, Context.MODE_PRIVATE);
-        if (prefs.getBoolean(SettingsActivity.PREFS_SERVICE, true)) {
-            startService(new Intent(this, ClipboardService.class));
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if (intent != null) {
+            int position = intent.getIntExtra("notify_item_inserted", -1);
+            if( position != -1) {
+                mRecyclerView.getAdapter().notifyItemInserted(position);
+            }
         }
     }
 

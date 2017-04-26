@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+            android:name=".SnapTextApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -23,6 +24,7 @@
                 android:name=".MainActivity"
                 android:label="@string/app_name"
                 android:configChanges="orientation|keyboardHidden|screenSize"
+                android:launchMode="singleInstance"
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

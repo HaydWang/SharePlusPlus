@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.droidrise.snaptext.model.ClipItem;
 
 /**
  * Created by Hai on 4/24/17.
@@ -18,7 +19,7 @@ public class ClipsViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, view);
     }
 
-    public void onBindViewHolder(int position) {
-        mTextView.setText("Hello World" + this);
+    public void onBindViewHolder(int position, ClipItem clipItem) {
+        mTextView.setText(clipItem.getClip());
     }
 }

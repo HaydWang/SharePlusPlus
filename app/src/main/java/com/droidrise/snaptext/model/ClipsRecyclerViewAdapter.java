@@ -9,6 +9,10 @@ import android.view.ViewGroup;
 import com.droidrise.snaptext.ClipsViewHolder;
 import com.droidrise.snaptext.R;
 import com.droidrise.snaptext.RecyclerItemTouchHelperCallback;
+import com.droidrise.snaptext.SnapTextApplication;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Hai on 4/24/17.
@@ -18,7 +22,7 @@ public class ClipsRecyclerViewAdapter extends RecyclerView.Adapter<ClipsViewHold
     private final LayoutInflater mLayoutInflater;
     private final Context mContext;
 
-    //protected List<> mData;
+    private List<ClipItem> mData = null;
 
     public static class SpaceItemDecoration extends RecyclerView.ItemDecoration {
         private int space;
@@ -39,6 +43,10 @@ public class ClipsRecyclerViewAdapter extends RecyclerView.Adapter<ClipsViewHold
         mLayoutInflater = LayoutInflater.from(context);
     }
 
+    public void setData(List<ClipItem> data) {
+        mData = data;
+    }
+
     @Override
     public ClipsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ClipsViewHolder(mLayoutInflater.inflate(R.layout.clips_recyclerview_item, parent, false));
@@ -46,17 +54,17 @@ public class ClipsRecyclerViewAdapter extends RecyclerView.Adapter<ClipsViewHold
 
     @Override
     public void onBindViewHolder(ClipsViewHolder holder, int position) {
-        holder.onBindViewHolder(position);
+        holder.onBindViewHolder(position, mData.get(position));
     }
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        //Collections.swap(mData,fromPosition,toPosition);
+        Collections.swap(mData ,fromPosition,toPosition);
     }
 
     @Override
     public void onItemDissmiss(int position) {
-        //mData.remove(position);
+        mData .remove(position);
         notifyItemRemoved(position);
     }
 
@@ -74,6 +82,6 @@ public class ClipsRecyclerViewAdapter extends RecyclerView.Adapter<ClipsViewHold
 
     @Override
     public int getItemCount() {
-        return 16;//mData.size();
+        return mData.size();
     }
 }
