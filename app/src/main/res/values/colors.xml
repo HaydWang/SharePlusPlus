@@ -21,4 +21,21 @@
     <color name="colorSignature">#4a4a4a</color>
 
     <color name="main_background">#FEFEFE</color>
+
+    <color name="normal_bg">#F0F0F4</color>
+
+    <color name="black">#000000</color>
+    <color name="black_4a">#4a4a4a</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="bright_red">#A51C2D</color>
+    <color name="red_1">#FE2829</color>
+    <color name="red_2">#C83C23</color>
+    <color name="red_3">#FF4E20</color>
+    <color name="red_4">#F25500</color>
+    <color name="text_white">#FFFFFF</color>
+    <color name="text_bg">#062925</color>
+    <color name="light_text_gb">#B0A48A</color>
+    <color name="link_text">#044A42</color>
+    <color name="light_divider">#B8E1DD</color>
 </resources>

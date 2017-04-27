@@ -1,8 +1,6 @@
 package com.droidrise.snaptext;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +11,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -25,7 +22,7 @@ import com.droidrise.snaptext.model.ClipsRecyclerViewAdapter;
 /**
  * Created by Hai on 4/24/17.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     @BindView(R.id.recyclerview_mainscreen)
     RecyclerView mRecyclerView;
 
@@ -42,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent i = new Intent(MainActivity.this, EditActivity.class);
+                startActivity(i);
             }
         });
 

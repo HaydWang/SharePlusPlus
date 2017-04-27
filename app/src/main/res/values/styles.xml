@@ -22,4 +22,33 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimaryDark</item>
     </style>
+
+    <style name="NormalBgColor">
+        <item name="android:background">@color/normal_bg</item>
+    </style>
+
+    <style name="NormalBgLeftRightPadding" parent="NormalBgColor">
+        <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+    </style>
+
+    <style name="TextStyle">
+        <item name="android:textColor">@color/text_bg</item>
+        <item name="android:textSize">@dimen/normal_text_size</item>
+    </style>
+
+    <style name="EditTextStyle" parent="TextStyle">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="EditTextTitleStyle" parent="EditTextStyle">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/huge_text_size</item>
+    </style>
+
+    <style name="EditTextContentStyle" parent="EditTextStyle">
+        <item name="android:lineSpacingExtra">5dp</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+    </style>
+
 </resources>

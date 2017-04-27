@@ -29,7 +29,7 @@ import com.droidrise.snaptext.clipboard.ClipboardService;
 
 import java.util.ArrayList;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     private static final int MY_PERMISSIONS_REQUEST_GET_TASKS = 2;
 
