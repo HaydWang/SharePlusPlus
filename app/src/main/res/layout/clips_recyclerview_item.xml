@@ -80,7 +80,7 @@
                 android:src="@drawable/ic_file_save_black_24dp"/>
 
         <ImageButton
-                android:id="@+id/button_close"
+                android:id="@+id/button_delete"
                 android:layout_width="@dimen/button_size"
                 android:layout_height="@dimen/button_size"
                 android:layout_marginLeft="@dimen/button_margin"

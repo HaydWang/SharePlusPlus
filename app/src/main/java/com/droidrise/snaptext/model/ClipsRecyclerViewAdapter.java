@@ -10,6 +10,7 @@ import com.droidrise.snaptext.ClipsViewHolder;
 import com.droidrise.snaptext.R;
 import com.droidrise.snaptext.RecyclerItemTouchHelperCallback;
 import com.droidrise.snaptext.SnapTextApplication;
+import com.droidrise.snaptext.clipboard.ClipboardService;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,10 +23,9 @@ public class ClipsRecyclerViewAdapter extends RecyclerView.Adapter<ClipsViewHold
     private final LayoutInflater mLayoutInflater;
     private final Context mContext;
 
-    private List<ClipItem> mData = null;
 
     private OnRecyclerViewItemClickListener mOnItemClickListener = null;
-    public static interface OnRecyclerViewItemClickListener {
+    public interface OnRecyclerViewItemClickListener {
         void onItemClick(View view , int position);
     }
 
@@ -52,10 +52,6 @@ public class ClipsRecyclerViewAdapter extends RecyclerView.Adapter<ClipsViewHold
         mLayoutInflater = LayoutInflater.from(context);
     }
 
-    public void setData(List<ClipItem> data) {
-        mData = data;
-    }
-
     @Override
     public ClipsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mLayoutInflater.inflate(R.layout.clips_recyclerview_item, parent, false);
@@ -73,17 +69,17 @@ public class ClipsRecyclerViewAdapter extends RecyclerView.Adapter<ClipsViewHold
     @Override
     public void onBindViewHolder(ClipsViewHolder holder, int position) {
         holder.itemView.setTag(position);
-        holder.onBindViewHolder(position, mData.get(position));
+        holder.onBindViewHolder(this, position, SnapTextApplication.mData.get(position));
     }
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        Collections.swap(mData ,fromPosition,toPosition);
+        Collections.swap(SnapTextApplication.mData ,fromPosition,toPosition);
     }
 
     @Override
     public void onItemDissmiss(int position) {
-        mData .remove(position);
+        SnapTextApplication.getInstance().deleteClip(position);
         notifyItemRemoved(position);
     }
 
@@ -101,6 +97,6 @@ public class ClipsRecyclerViewAdapter extends RecyclerView.Adapter<ClipsViewHold
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return SnapTextApplication.mData.size();
     }
 }

@@ -37,8 +37,7 @@ import java.util.TreeMap;
  */
 
 public class ClipboardService extends Service {
-    public static List<ClipItem> mData = new ArrayList<>();
-    private Realm realm;
+
 
     private ClipboardManager mClipboardManager;
     private TextSnaper mTextSnaper;
@@ -53,21 +52,6 @@ public class ClipboardService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // Initialize Realm
-        Realm.init(this);
-
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .name("clips.realm")
-                .schemaVersion(1)
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        realm = Realm.getInstance(config);
-
-        RealmResults<ClipItem> clipItems = realm.where(ClipItem.class).findAll();
-        mData.addAll(realm.copyFromRealm(clipItems));
-        Log.d("f10210c", "mData loaded: " + mData.size());
-
 
         mClipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
         mClipboardManager.addPrimaryClipChangedListener(mClipChangedListener);
@@ -91,10 +75,7 @@ public class ClipboardService extends Service {
             mClipboardManager = null;
         }
 
-        if (realm != null) {
-            realm.close();
-            realm = null;
-        }
+        SnapTextApplication.getInstance().onDestroy();
     }
 
     @Nullable
@@ -120,13 +101,13 @@ public class ClipboardService extends Service {
                 CharSequence sequence = item.getText();
                 if (sequence != null) {
                     String text = sequence.toString() + "\r\n";
-                    addClip(this, text, source);
+                    addClip(text, source);
                 }
             } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_HTML)) {
                 CharSequence sequence = item.coerceToText(this);
                 if (sequence != null) {
                     String text = sequence.toString() + "\r\n";
-                    addClip(this, text, source);
+                    addClip(text, source);
                 }
             } else if (description.hasMimeType(ClipDescription.MIMETYPE_TEXT_INTENT)) {
                 // TODO: handle intent
@@ -192,21 +173,7 @@ public class ClipboardService extends Service {
         return null;
     }
 
-    private void addClip(final Context context, final String text, final String source) {
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                ClipItem clip = realm.createObject(ClipItem.class);
-                clip.setClip(text);
-                clip.setSource(source);
-                clip.setDate(System.currentTimeMillis());
-
-                mData.add(0, clip);
-                Intent intent = new Intent(context, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("notify_item_inserted", 0);
-                context.startActivity(intent);
-            }
-        });
+    private void addClip(final String text, final String source) {
+        SnapTextApplication.getInstance().addClip(text, source);
     }
 }

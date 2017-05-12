@@ -10,7 +10,9 @@ import android.support.v7.widget.*;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -45,7 +47,6 @@ public class MainActivity extends BaseActivity {
         });
 
         ClipsRecyclerViewAdapter adapter = new ClipsRecyclerViewAdapter(this);
-        adapter.setData(ClipboardService.mData);
         mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, OrientationHelper.VERTICAL));
         mRecyclerView.setAdapter(adapter);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -61,7 +62,13 @@ public class MainActivity extends BaseActivity {
         adapter.setOnItemClickListener(new ClipsRecyclerViewAdapter.OnRecyclerViewItemClickListener(){
             @Override
             public void onItemClick(View view, int position) {
-                ClipItem clip = ClipboardService.mData.get(position);
+                if (view.getId() == R.id.button_delete) {
+                    SnapTextApplication.getInstance().deleteClip(position);
+                    mRecyclerView.getAdapter().notifyDataSetChanged();
+                    return;
+                }
+
+                ClipItem clip = SnapTextApplication.mData.get(position);
                 TextSnaper snaper = new TextSnaper(view.getContext());
                 snaper.showContent(clip.getClip(), clip.getSource());
             }
@@ -75,7 +82,7 @@ public class MainActivity extends BaseActivity {
         if (intent != null) {
             int position = intent.getIntExtra("notify_item_inserted", -1);
             if( position != -1) {
-                mRecyclerView.getAdapter().notifyItemInserted(position);
+                mRecyclerView.getAdapter().notifyDataSetChanged();
             }
         }
     }
